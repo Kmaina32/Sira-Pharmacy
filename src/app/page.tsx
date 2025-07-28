@@ -2,16 +2,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pill, HeartPulse, Baby, Search } from 'lucide-react';
+import { Pill, HeartPulse, Baby, BriefcaseMedical } from 'lucide-react';
 import { products } from '@/lib/placeholder-data';
 import AppHeader from '@/components/AppHeader';
 
 export default function HomePage() {
-  const featuredProducts = products.slice(0, 4);
+  const featuredProducts = products.slice(0, 8);
   const categories = [
     { name: 'Medication', icon: Pill, href: '/products?category=medication' },
     { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness' },
     { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care' },
+    { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid' },
   ];
 
   return (
@@ -47,7 +48,7 @@ export default function HomePage() {
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter text-center mb-12 font-headline">Shop by Category</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {categories.map((category) => (
                 <Link key={category.name} href={category.href} className="group">
                   <Card className="h-full flex flex-col items-center justify-center p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:bg-primary/5">

@@ -4,7 +4,7 @@ export interface Product {
   description: string;
   price: number;
   imageUrl: string;
-  category: 'medication' | 'wellness' | 'baby-care' | 'personal-care';
+  category: 'medication' | 'wellness' | 'baby-care' | 'personal-care' | 'first-aid';
   stock: number;
   usage: string;
   aiHint: string;
@@ -99,6 +99,50 @@ export const products: Product[] = [
     usage: 'Apply generously 15 minutes before sun exposure. Reapply every 2 hours.',
     aiHint: 'sunscreen lotion',
   },
+  {
+    id: '9',
+    name: 'Digital Thermometer',
+    description: 'Fast and accurate temperature readings. For oral, rectal, or underarm use.',
+    price: 700.00,
+    imageUrl: 'https://placehold.co/400x400.png',
+    category: 'first-aid',
+    stock: 60,
+    usage: 'Clean before and after each use. Read instructions for accurate measurement.',
+    aiHint: 'digital thermometer',
+  },
+  {
+    id: '10',
+    name: 'Adhesive Bandages (100-pack)',
+    description: 'Assorted sizes for all minor cuts and scrapes. Sterile and long-lasting.',
+    price: 200.00,
+    imageUrl: 'https://placehold.co/400x400.png',
+    category: 'first-aid',
+    stock: 300,
+    usage: 'Apply to clean, dry skin. Change daily or when wet.',
+    aiHint: 'adhesive bandages',
+  },
+  {
+    id: '11',
+    name: 'Ibuprofen 200mg',
+    description: 'Anti-inflammatory drug for relief from headaches, muscle pain, and menstrual cramps.',
+    price: 250.00,
+    imageUrl: 'https://placehold.co/400x400.png',
+    category: 'medication',
+    stock: 130,
+    usage: 'Take 1-2 tablets with water, up to 3 times a day as required.',
+    aiHint: 'pain relief',
+  },
+  {
+    id: '12',
+    name: 'Multivitamin Gummies',
+    description: 'A tasty way to get your daily essential vitamins and minerals. For adults.',
+    price: 950.00,
+    imageUrl: 'https://placehold.co/400x400.png',
+    category: 'wellness',
+    stock: 85,
+    usage: 'Chew two gummies daily.',
+    aiHint: 'vitamin gummies',
+  },
 ];
 
 export const categories = [
@@ -107,6 +151,7 @@ export const categories = [
     { value: 'wellness', label: 'Wellness' },
     { value: 'baby-care', label: 'Baby Care' },
     { value: 'personal-care', label: 'Personal Care' },
+    { value: 'first-aid', label: 'First Aid' },
 ];
 
 export const orders = [
