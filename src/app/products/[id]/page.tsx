@@ -27,9 +27,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const productId = params.id;
 
   useEffect(() => {
-    const productId = params.id;
     if (!productId) return;
     const fetchProduct = async () => {
       setLoading(true);
@@ -43,7 +43,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       setLoading(false);
     };
     fetchProduct();
-  }, [params.id]);
+  }, [productId]);
 
   if (loading) {
     return (
