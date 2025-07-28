@@ -1,10 +1,11 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, getIdTokenResult } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -23,14 +24,13 @@ const saveUserToDb = async (user: User) => {
     const userRef = doc(db, 'users', user.uid);
     try {
         const userDoc = await getDoc(userRef);
-        // Only write the document if it's a new user
         if (!userDoc.exists()) {
              await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
                 photoURL: user.photoURL,
-                createdAt: new Date(),
+                createdAt: serverTimestamp(),
             }, { merge: true });
         }
     } catch (error) {
@@ -46,11 +46,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
       setUser(user);
       if (user) {
         await saveUserToDb(user);
-        // Check for admin custom claim
-        const idTokenResult = await getIdTokenResult(user);
+        const idTokenResult = await user.getIdTokenResult(true); // Force refresh
         setIsAdmin(!!idTokenResult.claims.isAdmin);
       } else {
         setIsAdmin(false);
@@ -68,7 +68,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (email: string, password: string, displayName: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, { displayName });
-    // Manually update the user object to reflect the new display name immediately
     const updatedUser = { ...userCredential.user, displayName };
     await saveUserToDb(updatedUser as User);
     setUser(updatedUser as User); 
