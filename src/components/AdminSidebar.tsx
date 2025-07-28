@@ -19,9 +19,18 @@ import {
   Syringe,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const { logout, user } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
 
   const menuItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -62,12 +71,10 @@ export default function AdminSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <Link href="/">
-            <SidebarMenuButton>
-                <LogOut />
-                <span>Logout</span>
-            </SidebarMenuButton>
-        </Link>
+        <SidebarMenuButton onClick={handleLogout}>
+            <LogOut />
+            <span>Logout</span>
+        </SidebarMenuButton>
       </SidebarFooter>
     </>
   );
