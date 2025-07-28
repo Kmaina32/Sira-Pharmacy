@@ -2,7 +2,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, getIdTokenResult } from 'firebase/auth';
+import { onIdTokenChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
@@ -45,19 +45,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
       setLoading(true);
-      setUser(user);
       if (user) {
         await saveUserToDb(user);
-        try {
-            const idTokenResult = await user.getIdTokenResult(true); // Force refresh of the token
-            setIsAdmin(!!idTokenResult.claims.isAdmin);
-        } catch (error) {
-            console.error("Error getting ID token result:", error);
-            setIsAdmin(false);
-        }
+        const idTokenResult = await user.getIdTokenResult();
+        setIsAdmin(!!idTokenResult.claims.isAdmin);
+        setUser(user);
       } else {
+        setUser(null);
         setIsAdmin(false);
       }
       setLoading(false);
