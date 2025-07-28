@@ -50,8 +50,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       if (user) {
         await saveUserToDb(user);
-        const idTokenResult = await user.getIdTokenResult(true); // Force refresh
-        setIsAdmin(!!idTokenResult.claims.isAdmin);
+        try {
+            const idTokenResult = await user.getIdTokenResult(true); // Force refresh of the token
+            setIsAdmin(!!idTokenResult.claims.isAdmin);
+        } catch (error) {
+            console.error("Error getting ID token result:", error);
+            setIsAdmin(false);
+        }
       } else {
         setIsAdmin(false);
       }
