@@ -20,16 +20,11 @@ interface User {
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isAdmin } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      if (!isAdmin) {
-        setLoading(false);
-        return;
-      }
       setLoading(true);
-      
       const usersCollection = collection(db, 'users');
       const usersSnapshot = await getDocs(usersCollection);
       
@@ -42,7 +37,7 @@ export default function AdminCustomersPage() {
           displayName: data.displayName,
           email: data.email,
           photoURL: data.photoURL,
-          isAdmin: data.email === adminEmail,
+          isAdmin: data.isAdmin === true,
         };
       });
 
@@ -50,15 +45,19 @@ export default function AdminCustomersPage() {
       setLoading(false);
     };
 
-    fetchCustomers();
-  }, [isAdmin]);
+    if (!authLoading && isAdmin) {
+      fetchCustomers();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [isAdmin, authLoading]);
   
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="space-y-8">
         <h1 className="text-3xl font-bold font-headline">Customers</h1>
