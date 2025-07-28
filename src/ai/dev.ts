@@ -1,7 +1,6 @@
 
 'use server';
-import { initializeApp, getApps, App } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
+import * as admin from 'firebase-admin';
 
 // --- IMPORTANT ---
 // This script is for one-time use to set an admin user.
@@ -26,17 +25,13 @@ const serviceAccount = {
 
 const adminEmail = 'gmaina424@gmail.com'; // <-- 🚨REPLACE WITH YOUR ADMIN EMAIL
 
-let adminApp: App;
-if (!getApps().some(app => app.name === 'adminApp')) {
-    adminApp = initializeApp({
-        credential: {
-            projectId: serviceAccount.project_id,
-            clientEmail: serviceAccount.client_email,
-            privateKey: serviceAccount.private_key,
-        },
+let adminApp: admin.app.App;
+if (!admin.apps.some(app => app?.name === 'adminApp')) {
+    adminApp = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
     }, 'adminApp');
 } else {
-    adminApp = getApps().find(app => app.name === 'adminApp')!;
+    adminApp = admin.app('adminApp');
 }
 
 
@@ -48,7 +43,7 @@ async function setAdminClaim() {
     }
     
     try {
-        const auth = getAuth(adminApp);
+        const auth = admin.auth(adminApp);
         console.log(`Fetching user with email: ${adminEmail}...`);
         const user = await auth.getUserByEmail(adminEmail);
         
