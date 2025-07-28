@@ -4,6 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useAuth } from '@/context/AuthContext';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import AppHeader from '@/components/AppHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +17,8 @@ import { useCart } from '@/context/CartContext';
 import { formatCurrency } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 const checkoutSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -28,19 +33,53 @@ const checkoutSchema = z.object({
 
 export default function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useCart();
+  const { user } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const form = useForm<z.infer<typeof checkoutSchema>>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
+      name: user?.displayName || '',
+      email: user?.email || '',
       paymentMethod: 'mpesa',
     },
   });
 
-  const onSubmit = (data: z.infer<typeof checkoutSchema>) => {
-    console.log('Order submitted:', data);
-    clearCart();
-    router.push('/confirmation');
+  const onSubmit = async (data: z.infer<typeof checkoutSchema>) => {
+    setIsProcessing(true);
+    if (!user) {
+        toast({ title: "Authentication Error", description: "You must be logged in to place an order.", variant: "destructive" });
+        setIsProcessing(false);
+        return;
+    }
+    try {
+        await addDoc(collection(db, 'orders'), {
+            userId: user.uid,
+            customerName: data.name,
+            customerEmail: data.email,
+            customerPhone: data.phone,
+            shippingAddress: {
+                address: data.address,
+                city: data.city,
+            },
+            items: cart,
+            total: cartTotal,
+            status: 'Processing',
+            paymentMethod: data.paymentMethod,
+            createdAt: serverTimestamp(),
+        });
+
+      clearCart();
+      toast({ title: 'Order Placed!', description: 'Your order has been successfully submitted.' });
+      router.push('/confirmation');
+    } catch (error) {
+        console.error("Error placing order:", error);
+        toast({ title: 'Order Failed', description: 'There was a problem placing your order.', variant: 'destructive' });
+    } finally {
+        setIsProcessing(false);
+    }
   };
   
   if (cart.length === 0) {
@@ -82,7 +121,7 @@ export default function CheckoutPage() {
                     <FormItem className="md:col-span-2"><FormLabel>Address</FormLabel><FormControl><Input placeholder="123 Moi Avenue" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="city" render={({ field }) => (
-                    <FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Nairobi" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Nairobi" /></FormControl><FormMessage /></FormItem>
                   )} />
                 </CardContent>
               </Card>
@@ -130,7 +169,9 @@ export default function CheckoutPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Button type="submit" size="lg" className="w-full mt-8 bg-accent hover:bg-accent/90 text-accent-foreground">Place Order</Button>
+              <Button type="submit" size="lg" className="w-full mt-8 bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
+                {isProcessing ? 'Placing Order...' : 'Place Order'}
+                </Button>
             </div>
           </form>
         </Form>
