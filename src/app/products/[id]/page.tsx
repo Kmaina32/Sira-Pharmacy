@@ -29,10 +29,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!params.id) return;
+    const productId = params.id;
+    if (!productId) return;
     const fetchProduct = async () => {
       setLoading(true);
-      const docRef = doc(db, 'products', params.id);
+      const docRef = doc(db, 'products', productId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setProduct({ id: docSnap.id, ...docSnap.data() } as Product);
