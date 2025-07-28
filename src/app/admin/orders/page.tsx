@@ -11,6 +11,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/context/AuthContext';
+
 
 interface Order {
     id: string;
@@ -23,19 +25,28 @@ interface Order {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
+    if (!isAdmin) {
+        setLoading(false);
+        return;
+    }
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const ordersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
       setOrders(ordersList);
       setLoading(false);
+    }, (error) => {
+        console.error("Error fetching orders: ", error);
+        setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [isAdmin]);
   
   const handleStatusChange = async (orderId: string, status: string) => {
+    if (!isAdmin) return;
     const orderRef = doc(db, 'orders', orderId);
     await updateDoc(orderRef, { status });
   };
@@ -49,6 +60,30 @@ export default function AdminOrdersPage() {
       default: return 'outline';
     }
   };
+  
+  if (loading) {
+    return (
+        <div className="space-y-8">
+            <h1 className="text-3xl font-bold font-headline">Orders</h1>
+            <Card>
+                <CardHeader><CardTitle>Customer Orders</CardTitle></CardHeader>
+                <CardContent><p>Loading orders...</p></CardContent>
+            </Card>
+        </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+        <div className="space-y-8">
+            <h1 className="text-3xl font-bold font-headline">Access Denied</h1>
+            <Card>
+                <CardHeader><CardTitle>Permission Required</CardTitle></CardHeader>
+                <CardContent><p>You do not have permission to view this page.</p></CardContent>
+            </Card>
+        </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -59,7 +94,6 @@ export default function AdminOrdersPage() {
           <CardTitle>Customer Orders</CardTitle>
         </CardHeader>
         <CardContent>
-        {loading ? <p>Loading orders...</p> : (
           <Table>
             <TableHeader>
               <TableRow>
@@ -114,7 +148,6 @@ export default function AdminOrdersPage() {
               ))}
             </TableBody>
           </Table>
-        )}
         </CardContent>
       </Card>
     </div>
