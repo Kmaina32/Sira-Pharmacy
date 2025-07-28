@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, getIdTokenResult } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -22,26 +22,15 @@ const saveUserToDb = async (user: User) => {
     if (!user) return;
     const userRef = doc(db, 'users', user.uid);
     try {
-        const isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-        // Check if the document exists, if not it's a new user.
         const userDoc = await getDoc(userRef);
+        // Only write the document if it's a new user
         if (!userDoc.exists()) {
              await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
                 photoURL: user.photoURL,
-                isAdmin: isAdmin,
                 createdAt: new Date(),
-            });
-        } else {
-            // Only update what's necessary for existing users
-             await setDoc(userRef, {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                isAdmin: isAdmin,
             }, { merge: true });
         }
     } catch (error) {
@@ -59,9 +48,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        const userIsAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-        setIsAdmin(userIsAdmin);
         await saveUserToDb(user);
+        // Check for admin custom claim
+        const idTokenResult = await getIdTokenResult(user);
+        setIsAdmin(!!idTokenResult.claims.isAdmin);
       } else {
         setIsAdmin(false);
       }
