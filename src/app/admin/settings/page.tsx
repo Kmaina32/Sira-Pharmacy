@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -17,6 +18,7 @@ import { Progress } from '@/components/ui/progress';
 
 const settingsSchema = z.object({
   appName: z.string().min(3, 'App name must be at least 3 characters'),
+  whatsAppNumber: z.string().min(10, 'Please enter a valid phone number').optional().or(z.literal('')),
   primaryColor: z.string().regex(/^(\d{1,3}\s\d{1,3}%\s\d{1,3}%)$/, 'Must be a valid HSL color string (e.g., "210 70% 50%")'),
   accentColor: z.string().regex(/^(\d{1,3}\s\d{1,3}%\s\d{1,3}%)$/, 'Must be a valid HSL color string (e.g., "180 60% 40%")'),
 });
@@ -34,6 +36,7 @@ export default function AdminSettingsPage() {
     resolver: zodResolver(settingsSchema),
     values: {
         appName: settings.appName,
+        whatsAppNumber: settings.whatsAppNumber,
         primaryColor: settings.primaryColor,
         accentColor: settings.accentColor,
     },
@@ -117,6 +120,14 @@ export default function AdminSettingsPage() {
                 <FormItem>
                   <FormLabel>App Name</FormLabel>
                   <FormControl><Input {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="whatsAppNumber" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>WhatsApp Number</FormLabel>
+                  <FormControl><Input {...field} placeholder="e.g. 254712345678" /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />

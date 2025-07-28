@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -10,6 +11,7 @@ interface Settings {
     heroImageUrl: string;
     primaryColor: string;
     accentColor: string;
+    whatsAppNumber?: string;
 }
 
 interface SettingsContextType {
@@ -23,6 +25,7 @@ const defaultSettings: Settings = {
     heroImageUrl: 'https://placehold.co/1920x1080.png',
     primaryColor: '210 70% 50%',
     accentColor: '180 60% 40%',
+    whatsAppNumber: '',
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
