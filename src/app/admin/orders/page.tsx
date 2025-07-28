@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -25,13 +26,15 @@ interface Order {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isAdmin } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isAdmin) {
         setLoading(false);
         return;
     }
+
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const ordersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
@@ -43,7 +46,7 @@ export default function AdminOrdersPage() {
     });
 
     return () => unsubscribe();
-  }, [isAdmin]);
+  }, [isAdmin, authLoading]);
   
   const handleStatusChange = async (orderId: string, status: string) => {
     if (!isAdmin) return;
@@ -61,7 +64,7 @@ export default function AdminOrdersPage() {
     }
   };
   
-  if (loading) {
+  if (loading || authLoading) {
     return (
         <div className="space-y-8">
             <h1 className="text-3xl font-bold font-headline">Orders</h1>
