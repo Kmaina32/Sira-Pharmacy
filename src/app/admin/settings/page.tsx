@@ -11,10 +11,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
+import { Progress } from '@/components/ui/progress';
 
 const settingsSchema = z.object({
   appName: z.string().min(3, 'App name must be at least 3 characters'),
-  heroImageUrl: z.string().url('Must be a valid URL'),
   primaryColor: z.string().regex(/^(\d{1,3}\s\d{1,3}%\s\d{1,3}%)$/, 'Must be a valid HSL color string (e.g., "210 70% 50%")'),
   accentColor: z.string().regex(/^(\d{1,3}\s\d{1,3}%\s\d{1,3}%)$/, 'Must be a valid HSL color string (e.g., "180 60% 40%")'),
 });
@@ -25,27 +27,59 @@ export default function AdminSettingsPage() {
   const { settings, updateSettings, loading } = useSettings();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsSchema),
     values: {
         appName: settings.appName,
-        heroImageUrl: settings.heroImageUrl,
         primaryColor: settings.primaryColor,
         accentColor: settings.accentColor,
     },
+    resetOptions: {
+      keepDirtyValues: true,
+    }
   });
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setHeroImageFile(file);
+    }
+  }
 
   const onSubmit = async (data: SettingsFormValues) => {
     setIsSubmitting(true);
+    let heroImageUrl = settings.heroImageUrl;
+
     try {
-      await updateSettings(data);
+      if (heroImageFile) {
+        setUploadProgress(0);
+        const storageRef = ref(storage, `hero-images/${heroImageFile.name}-${Date.now()}`);
+        const uploadTask = await uploadBytes(storageRef, heroImageFile);
+        
+        // This is a simplification; for real progress, you'd use uploadTask.on from the SDK
+        // but for a simple progress bar this should suffice to show activity.
+        setUploadProgress(100); 
+
+        heroImageUrl = await getDownloadURL(uploadTask.ref);
+        setHeroImageFile(null);
+      }
+      
+      const settingsToUpdate = {
+        ...data,
+        heroImageUrl,
+      };
+
+      await updateSettings(settingsToUpdate);
       toast({ title: 'Settings Updated', description: 'Your store settings have been saved.' });
     } catch (error) {
       console.error('Failed to update settings:', error);
       toast({ title: 'Error', description: 'Failed to update settings.', variant: 'destructive' });
     } finally {
         setIsSubmitting(false);
+        setUploadProgress(null);
     }
   };
   
@@ -87,13 +121,14 @@ export default function AdminSettingsPage() {
                 </FormItem>
               )} />
               
-              <FormField control={form.control} name="heroImageUrl" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hero Image URL</FormLabel>
-                  <FormControl><Input {...field} placeholder="https://placehold.co/1920x1080.png" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormItem>
+                <FormLabel>Hero Image</FormLabel>
+                <FormControl>
+                    <Input type="file" accept="image/*" onChange={handleFileChange} className="file:text-primary file:font-medium" />
+                </FormControl>
+                {uploadProgress !== null && <Progress value={uploadProgress} className="mt-2" />}
+                <FormMessage />
+              </FormItem>
 
               <FormField control={form.control} name="primaryColor" render={({ field }) => (
                 <FormItem>
