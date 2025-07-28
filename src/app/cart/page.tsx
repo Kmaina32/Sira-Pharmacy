@@ -10,9 +10,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, cartTotal } = useCart();
+  const { settings } = useSettings();
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -100,7 +102,7 @@ export default function CartPage() {
       </main>
       <footer className="bg-secondary text-secondary-foreground py-6 mt-8">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <p>&copy; {new Date().getFullYear()} Sira Pharmacy. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
         </div>
       </footer>
     </div>

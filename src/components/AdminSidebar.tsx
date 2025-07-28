@@ -17,15 +17,18 @@ import {
   Users,
   LogOut,
   Syringe,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const { logout, user } = useAuth();
   const router = useRouter();
+  const { settings } = useSettings();
 
   const handleLogout = async () => {
     await logout();
@@ -37,6 +40,7 @@ export default function AdminSidebar() {
     { href: '/admin/products', label: 'Products', icon: Box },
     { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { href: '/admin/customers', label: 'Customers', icon: Users },
+    { href: '/admin/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -47,7 +51,7 @@ export default function AdminSidebar() {
                 <Syringe className="h-8 w-8 text-primary" />
             </Link>
             <div className="flex flex-col">
-                <span className="text-lg font-bold text-primary font-headline">Sira Pharmacy</span>
+                <span className="text-lg font-bold text-primary font-headline">{settings.appName}</span>
                 <span className="text-xs text-muted-foreground">Admin Panel</span>
             </div>
             <SidebarTrigger className="ml-auto" />
@@ -59,7 +63,7 @@ export default function AdminSidebar() {
             <SidebarMenuItem key={item.label}>
               <Link href={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={{ children: item.label, side: 'right' }}
                 >
                   <item.icon />

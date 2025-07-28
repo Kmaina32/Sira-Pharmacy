@@ -15,6 +15,7 @@ import { Syringe } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 
 const signupSchema = z.object({
   fullName: z.string().min(2, 'Name is too short'),
@@ -31,6 +32,7 @@ export default function SignupPage() {
   const { signup, loginWithGoogle } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { settings } = useSettings();
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -41,7 +43,7 @@ export default function SignupPage() {
     setIsLoading(true);
     try {
       await signup(data.email, data.password, data.fullName);
-      toast({ title: 'Signup successful!', description: 'Welcome to Sira Pharmacy.' });
+      toast({ title: 'Signup successful!', description: `Welcome to ${settings.appName}.` });
       router.push('/');
     } catch (error: any) {
       toast({
@@ -77,7 +79,7 @@ export default function SignupPage() {
         <CardHeader className="text-center">
           <Link href="/" className="flex items-center justify-center gap-2 mb-4">
             <Syringe className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-primary font-headline">Sira Pharmacy</span>
+            <span className="text-2xl font-bold text-primary font-headline">{settings.appName}</span>
           </Link>
           <CardTitle className="font-headline text-2xl">Create an Account</CardTitle>
           <CardDescription>Enter your information to get started</CardDescription>

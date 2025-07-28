@@ -15,6 +15,7 @@ import { Syringe } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -26,6 +27,7 @@ export default function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { settings } = useSettings();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -72,7 +74,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <Link href="/" className="flex items-center justify-center gap-2 mb-4">
             <Syringe className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-primary font-headline">Sira Pharmacy</span>
+            <span className="text-2xl font-bold text-primary font-headline">{settings.appName}</span>
           </Link>
           <CardTitle className="font-headline text-2xl">Welcome Back</CardTitle>
           <CardDescription>Enter your credentials to access your account</CardDescription>

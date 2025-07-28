@@ -1,12 +1,33 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pill, HeartPulse, Baby, BriefcaseMedical } from 'lucide-react';
-import { products } from '@/lib/placeholder-data';
 import AppHeader from '@/components/AppHeader';
+import { Product } from '@/lib/placeholder-data';
+import { useEffect, useState } from 'react';
+import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { formatCurrency } from '@/lib/utils';
+import { useSettings } from '@/context/SettingsContext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { settings, loading: settingsLoading } = useSettings();
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
+      const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      setProducts(productsData);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const featuredProducts = products.slice(0, 8);
   const categories = [
     { name: 'Medication', icon: Pill, href: '/products?category=medication' },
@@ -20,17 +41,21 @@ export default function HomePage() {
       <AppHeader />
       <main className="flex-1">
         <section className="relative w-full py-20 md:py-32 lg:py-40 bg-primary/10">
-          <Image
-            src="https://placehold.co/1920x1080.png"
-            alt="Pharmacist"
-            layout="fill"
-            objectFit="cover"
-            className="opacity-20"
-            data-ai-hint="pharmacy background"
-          />
+          {settingsLoading ? (
+             <Skeleton className="absolute inset-0 opacity-20" />
+          ) : (
+            <Image
+                src={settings.heroImageUrl || "https://placehold.co/1920x1080.png"}
+                alt="Pharmacist"
+                layout="fill"
+                objectFit="cover"
+                className="opacity-20"
+                data-ai-hint="pharmacy background"
+              />
+          )}
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-primary font-headline">
-              Your Health, Our Priority
+              {settingsLoading ? <Skeleton className="h-12 w-3/4 mx-auto" /> : settings.appName}
             </h1>
             <p className="mx-auto max-w-[700px] text-foreground/80 md:text-xl mt-4">
               Get your prescriptions and health products delivered to your doorstep. Fast, reliable, and convenient.
@@ -64,34 +89,42 @@ export default function HomePage() {
         <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter text-center mb-12 font-headline">Featured Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
-                <Card key={product.id} className="flex flex-col overflow-hidden transition-shadow hover:shadow-xl">
-                  <CardHeader className="p-0">
-                    <Link href={`/products/${product.id}`}>
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        width={300}
-                        height={300}
-                        className="w-full h-48 object-cover"
-                        data-ai-hint={product.aiHint}
-                      />
-                    </Link>
-                  </CardHeader>
-                  <CardContent className="p-4 flex-1 flex flex-col">
-                    <CardTitle className="text-lg font-headline mb-2">{product.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground flex-1">{product.description.substring(0, 60)}...</p>
-                    <p className="text-lg font-bold text-primary mt-2">Ksh {product.price.toFixed(2)}</p>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Link href={`/products/${product.id}`} className="w-full">
-                      <Button className="w-full">View Details</Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+            {loading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {[...Array(8)].map((_, i) => (
+                        <Card key={i}><CardContent className="p-4"><Skeleton className="h-48 w-full mb-4" /><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-4 w-1/2" /></CardContent></Card>
+                    ))}
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {featuredProducts.map((product) => (
+                    <Card key={product.id} className="flex flex-col overflow-hidden transition-shadow hover:shadow-xl">
+                    <CardHeader className="p-0">
+                        <Link href={`/products/${product.id}`}>
+                        <Image
+                            src={product.imageUrl}
+                            alt={product.name}
+                            width={300}
+                            height={300}
+                            className="w-full h-48 object-cover"
+                            data-ai-hint={product.aiHint}
+                        />
+                        </Link>
+                    </CardHeader>
+                    <CardContent className="p-4 flex-1 flex flex-col">
+                        <CardTitle className="text-lg font-headline mb-2">{product.name}</CardTitle>
+                        <p className="text-sm text-muted-foreground flex-1">{product.description.substring(0, 60)}...</p>
+                        <p className="text-lg font-bold text-primary mt-2">{formatCurrency(product.price)}</p>
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0">
+                        <Link href={`/products/${product.id}`} className="w-full">
+                        <Button className="w-full">View Details</Button>
+                        </Link>
+                    </CardFooter>
+                    </Card>
+                ))}
+                </div>
+            )}
             <div className="text-center mt-12">
               <Link href="/products">
                 <Button variant="outline">View All Products</Button>
@@ -102,7 +135,7 @@ export default function HomePage() {
       </main>
       <footer className="bg-secondary text-secondary-foreground py-6">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <p>&copy; {new Date().getFullYear()} Sira Pharmacy. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
         </div>
       </footer>
     </div>

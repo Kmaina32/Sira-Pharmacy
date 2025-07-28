@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Syringe, ShoppingCart, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Syringe, ShoppingCart, User, LogOut, LayoutDashboard, Settings } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { Badge } from '@/components/ui/badge';
@@ -11,11 +11,13 @@ import React from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
+import { useSettings } from '@/context/SettingsContext';
 
 
 const AppHeader = () => {
   const { cart } = useCart();
   const { user, logout, isAdmin } = useAuth();
+  const { settings } = useSettings();
   const router = useRouter();
   const [isMounted, setIsMounted] = React.useState(false);
 
@@ -47,7 +49,7 @@ const AppHeader = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Syringe className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold text-primary font-headline">Sira Pharmacy</span>
+          <span className="text-xl font-bold text-primary font-headline">{settings.appName}</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
           {navLinks.map(link => (
@@ -126,7 +128,7 @@ const AppHeader = () => {
               <div className="flex flex-col gap-6 p-6">
                 <Link href="/" className="flex items-center gap-2 mb-4">
                   <Syringe className="h-8 w-8 text-primary" />
-                  <span className="text-xl font-bold text-primary font-headline">Sira Pharmacy</span>
+                  <span className="text-xl font-bold text-primary font-headline">{settings.appName}</span>
                 </Link>
                 {navLinks.map(link => (
                   <Link key={link.label} href={link.href} className="text-lg font-medium transition-colors hover:text-primary">

@@ -4,6 +4,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { Analytics } from "@vercel/analytics/react"
+import { SettingsProvider } from '@/context/SettingsContext';
+import ThemeUpdater from '@/components/ThemeUpdater';
 
 export const metadata: Metadata = {
   title: 'Sira Pharmacy Online',
@@ -24,10 +26,13 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <AuthProvider>
-          <CartProvider>
-            {children}
-            <Toaster />
-          </CartProvider>
+            <SettingsProvider>
+                <CartProvider>
+                    <ThemeUpdater />
+                    {children}
+                    <Toaster />
+                </CartProvider>
+            </SettingsProvider>
         </AuthProvider>
         <Analytics />
       </body>

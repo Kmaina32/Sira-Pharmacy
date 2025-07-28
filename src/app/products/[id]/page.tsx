@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { products } from '@/lib/placeholder-data';
+import { Product } from '@/lib/placeholder-data';
 import AppHeader from '@/components/AppHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,14 +11,54 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/context/CartContext';
 import { formatCurrency } from '@/lib/utils';
 import { Minus, Plus, ShieldCheck, Truck } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const product = products.find(p => p.id === params.id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!params.id) return;
+    const fetchProduct = async () => {
+      setLoading(true);
+      const docRef = doc(db, 'products', params.id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setProduct({ id: docSnap.id, ...docSnap.data() } as Product);
+      } else {
+        notFound();
+      }
+      setLoading(false);
+    };
+    fetchProduct();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+        <div className="flex flex-col min-h-screen bg-background">
+            <AppHeader />
+            <main className="flex-1 container mx-auto px-4 md:px-6 py-8">
+                <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+                    <Skeleton className="w-full h-[500px] rounded-lg" />
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-3/4" />
+                        <Skeleton className="h-8 w-1/4" />
+                        <Skeleton className="h-20 w-full" />
+                        <Skeleton className="h-24 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                    </div>
+                </div>
+            </main>
+        </div>
+    )
+  }
 
   if (!product) {
-    notFound();
+    return null; // notFound() is called in useEffect
   }
 
   const handleQuantityChange = (amount: number) => {
