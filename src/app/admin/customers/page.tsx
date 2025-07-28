@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -23,27 +23,31 @@ export default function AdminCustomersPage() {
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
-      // In a real app, you'd have a secure way to get users, likely via a Cloud Function
-      // For this prototype, we will fetch users who have placed orders.
-      const ordersSnapshot = await getDocs(collection(db, 'orders'));
-      const usersMap = new Map<string, User>();
-
-      ordersSnapshot.docs.forEach(doc => {
-          const order = doc.data();
-          if (!usersMap.has(order.userId)) {
-              usersMap.set(order.userId, {
-                  id: order.userId,
-                  displayName: order.customerName,
-                  email: order.customerEmail,
-              });
-          }
-      });
+      
+      const usersCollection = collection(db, 'users');
+      const usersSnapshot = await getDocs(usersCollection);
       
       const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-      const customersList = Array.from(usersMap.values()).map(c => ({...c, isAdmin: c.email === adminEmail}));
+      
+      const customersList = usersSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          displayName: data.displayName,
+          email: data.email,
+          photoURL: data.photoURL,
+          isAdmin: data.email === adminEmail,
+        };
+      });
 
       setCustomers(customersList);
       setLoading(false);
+    };
+
+    const saveUserOnSignup = async () => {
+        // This is a placeholder for a more robust user creation flow,
+        // ideally handled by a Cloud Function on user creation.
+        // For now, we'll ensure the user doc exists when they interact.
     };
 
     fetchCustomers();
@@ -86,7 +90,7 @@ export default function AdminCustomersPage() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{customer.email}</TableCell>
                     <TableCell>
-                      {customer.isAdmin && <Badge>Admin</Badge>}
+                      {customer.isAdmin ? <Badge>Admin</Badge> : <Badge variant="outline">Customer</Badge>}
                     </TableCell>
                   </TableRow>
                 ))}

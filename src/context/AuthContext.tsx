@@ -2,8 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +18,21 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const saveUserToDb = async (user: User) => {
+    if (!user) return;
+    const userRef = doc(db, 'users', user.uid);
+    try {
+        await setDoc(userRef, {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+        }, { merge: true });
+    } catch (error) {
+        console.error("Error saving user to Firestore:", error);
+    }
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,10 +40,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
         setIsAdmin(user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL);
+        await saveUserToDb(user);
       } else {
         setIsAdmin(false);
       }
@@ -44,8 +61,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (email: string, password: string, displayName: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, { displayName });
-    // This will trigger the onAuthStateChanged listener and update the user state
-    setUser(userCredential.user);
+    // Manually update the user object to reflect the new display name immediately
+    const updatedUser = { ...userCredential.user, displayName };
+    await saveUserToDb(updatedUser as User);
+    setUser(updatedUser as User); 
     return userCredential;
   };
 
@@ -53,9 +72,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return signOut(auth);
   };
   
-  const loginWithGoogle = () => {
+  const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    await saveUserToDb(result.user);
+    return result;
   };
 
   return (
