@@ -11,12 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/context/CartContext';
 import { formatCurrency } from '@/lib/utils';
-import { Minus, Plus, ShieldCheck, Truck, ArrowLeft, Instagram } from 'lucide-react';
+import { Minus, Plus, ShieldCheck, Truck, ArrowLeft } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSettings } from '@/context/SettingsContext';
-import Link from 'next/link';
+import AppFooter from '@/components/AppFooter';
 
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -165,16 +165,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </main>
-      <footer className="bg-secondary text-secondary-foreground py-6 mt-8">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-            <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
-             <div className="flex justify-center gap-4 mt-4">
-                <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
-                    <Instagram className="h-6 w-6 text-muted-foreground hover:text-primary" />
-                </Link>
-            </div>
-        </div>
-      </footer>
+      <AppFooter />
     </div>
   );
 }

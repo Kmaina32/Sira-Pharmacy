@@ -7,6 +7,7 @@ import { useSettings } from '@/context/SettingsContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Instagram, Syringe } from 'lucide-react';
+import AppFooter from '@/components/AppFooter';
 
 export default function AboutPage() {
     const { settings } = useSettings();
@@ -63,16 +64,7 @@ export default function AboutPage() {
                     </div>
                 </div>
             </main>
-            <footer className="bg-secondary text-secondary-foreground py-6 mt-auto">
-                <div className="container mx-auto px-4 md:px-6 text-center">
-                    <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
-                     <div className="flex justify-center gap-4 mt-4">
-                        <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
-                            <Instagram className="h-6 w-6 text-muted-foreground hover:text-primary" />
-                        </Link>
-                    </div>
-                </div>
-            </footer>
+            <AppFooter />
         </div>
     );
 }

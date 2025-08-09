@@ -5,15 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pill, HeartPulse, Baby, BriefcaseMedical, Instagram } from 'lucide-react';
+import { Pill, HeartPulse, Baby, BriefcaseMedical } from 'lucide-react';
 import AppHeader from '@/components/AppHeader';
 import { Product } from '@/lib/placeholder-data';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { formatCurrency } from '@/lib/utils';
 import { useSettings } from '@/context/SettingsContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import AppFooter from '@/components/AppFooter';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -55,6 +56,7 @@ export default function HomePage() {
                                 objectFit="cover"
                                 className="z-0"
                                 data-ai-hint="pharmacy background"
+                                priority
                             />
                             <div className="absolute inset-0 bg-black/50 z-10" />
                         </>
@@ -152,16 +154,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <footer className="bg-secondary text-secondary-foreground py-6">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-            <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
-            <div className="flex justify-center gap-4 mt-4">
-                <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
-                    <Instagram className="h-6 w-6 text-muted-foreground hover:text-primary" />
-                </Link>
-            </div>
-        </div>
-      </footer>
+      <AppFooter />
     </div>
   );
 }

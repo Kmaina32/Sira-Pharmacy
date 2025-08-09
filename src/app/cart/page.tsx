@@ -8,14 +8,13 @@ import AppHeader from '@/components/AppHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Minus, Plus, Trash2, ShoppingCart, Instagram } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import { useSettings } from '@/context/SettingsContext';
+import AppFooter from '@/components/AppFooter';
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, cartTotal } = useCart();
-  const { settings } = useSettings();
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -101,16 +100,7 @@ export default function CartPage() {
           </div>
         )}
       </main>
-      <footer className="bg-secondary text-secondary-foreground py-6 mt-8">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
-           <div className="flex justify-center gap-4 mt-4">
-              <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
-                  <Instagram className="h-6 w-6 text-muted-foreground hover:text-primary" />
-              </Link>
-          </div>
-        </div>
-      </footer>
+      <AppFooter />
     </div>
   );
 }

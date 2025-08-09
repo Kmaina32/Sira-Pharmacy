@@ -14,11 +14,11 @@ import { Product, categories } from '@/lib/placeholder-data';
 import AppHeader from '@/components/AppHeader';
 import { useCart } from '@/context/CartContext';
 import { formatCurrency } from '@/lib/utils';
-import { Search, Instagram } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSettings } from '@/context/SettingsContext';
+import AppFooter from '@/components/AppFooter';
 
 
 export default function ProductsPage() {
@@ -28,7 +28,6 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const { settings } = useSettings();
 
   useEffect(() => {
     setLoading(true);
@@ -125,16 +124,7 @@ export default function ProductsPage() {
           </div>
         )}
       </main>
-      <footer className="bg-secondary text-secondary-foreground py-6 mt-8">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-            <p>&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
-             <div className="flex justify-center gap-4 mt-4">
-                <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
-                    <Instagram className="h-6 w-6 text-muted-foreground hover:text-primary" />
-                </Link>
-            </div>
-        </div>
-      </footer>
+      <AppFooter />
     </div>
   );
 }
