@@ -44,21 +44,21 @@ export default function HomePage() {
         <section className="w-full py-6 md:py-12">
             <div className="container mx-auto px-4 md:px-6">
                  <div className="relative rounded-lg overflow-hidden h-[500px] flex items-center justify-center text-center p-8">
-                     {settingsLoading ? (
-                         <Skeleton className="absolute inset-0" />
-                     ) : (
-                         <>
-                             <Image
-                                 src={settings.heroImageUrl || "https://placehold.co/1920x1080.png"}
-                                 alt="Pharmacist"
-                                 layout="fill"
-                                 objectFit="cover"
-                                 className="z-0"
-                                 data-ai-hint="pharmacy background"
-                             />
-                             <div className="absolute inset-0 bg-black/50 z-10" />
-                         </>
-                     )}
+                    {settingsLoading ? (
+                        <Skeleton className="absolute inset-0" />
+                    ) : (
+                        <>
+                            <Image
+                                src={settings.heroImageUrl || "https://placehold.co/1920x1080.png"}
+                                alt="Pharmacist"
+                                layout="fill"
+                                objectFit="cover"
+                                className="z-0"
+                                data-ai-hint="pharmacy background"
+                            />
+                            <div className="absolute inset-0 bg-black/50 z-10" />
+                        </>
+                    )}
                      <div className="relative z-20">
                          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white font-headline">
                            {settingsLoading ? <Skeleton className="h-12 w-3/4 mx-auto bg-white/20" /> : settings.appName}
