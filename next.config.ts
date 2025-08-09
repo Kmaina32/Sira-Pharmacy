@@ -70,6 +70,12 @@ const nextConfig: NextConfig = {
         hostname: 'firstaidforlife.org.uk',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.newfoodmagazine.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
