@@ -29,7 +29,7 @@ const defaultSettings: Settings = {
     accentColor: '180 60% 40%',
     whatsAppNumber: '+254757586253',
     stripePublishableKey: '',
-    paypalClientId: '',
+    paypalClientId: 'AcCBMcL39fb_eXRorSbjeiD-JPUpMf8fYQo69l4yrBzIUBZTojpCPXRC1t86ZFekTRCOEJyhr3cVe_cy',
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
