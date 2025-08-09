@@ -78,7 +78,7 @@ export default function SignupPage() {
   return (
     <div className="relative flex items-center justify-center min-h-screen w-full">
         <Image
-            src={settings.heroImageUrl}
+            src="https://images.unsplash.com/photo-1576683545629-17861be41253?q=80&w=2070&auto=format&fit=crop"
             alt="Pharmacy background"
             fill
             className="object-cover z-0"
