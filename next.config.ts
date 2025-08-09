@@ -82,6 +82,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.lullabytrust.org.uk',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'orthohub.co.ke',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
