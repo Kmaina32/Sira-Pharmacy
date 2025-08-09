@@ -31,10 +31,10 @@ export default function HomePage() {
 
   const featuredProducts = products.slice(0, 8);
   const categories = [
-    { name: 'Medication', icon: Pill, href: '/products?category=medication' },
-    { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness' },
-    { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care' },
-    { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid' },
+    { name: 'Medication', icon: Pill, href: '/products?category=medication', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'assorted pills' },
+    { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'yoga meditation' },
+    { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'happy baby' },
+    { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'first-aid kit' },
   ];
 
   return (
@@ -84,10 +84,21 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {categories.map((category) => (
                 <Link key={category.name} href={category.href} className="group">
-                  <Card className="h-full flex flex-col items-center justify-center p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:bg-primary/5">
-                    <category.icon className="w-16 h-16 text-primary mb-4 transition-transform duration-300 group-hover:scale-110" />
-                    <CardTitle className="font-headline">{category.name}</CardTitle>
-                  </Card>
+                    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                        <div className="relative h-48">
+                            <Image
+                                src={category.imageUrl}
+                                alt={category.name}
+                                layout="fill"
+                                objectFit="cover"
+                                className="transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={category.aiHint}
+                            />
+                        </div>
+                        <CardContent className="p-4 text-center">
+                            <CardTitle className="font-headline text-lg">{category.name}</CardTitle>
+                        </CardContent>
+                    </Card>
                 </Link>
               ))}
             </div>
