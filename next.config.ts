@@ -46,6 +46,18 @@ const nextConfig: NextConfig = {
         hostname: 'antdisplay.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.citypng.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.clipartmax.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
