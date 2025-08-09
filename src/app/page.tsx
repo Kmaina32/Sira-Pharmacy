@@ -41,34 +41,41 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       <AppHeader />
       <main className="flex-1">
-        <section className="relative w-full py-20 md:py-32 lg:py-40 bg-primary/10">
-          {settingsLoading ? (
-             <Skeleton className="absolute inset-0 opacity-20" />
-          ) : (
-            <Image
-                src={settings.heroImageUrl || "https://placehold.co/1920x1080.png"}
-                alt="Pharmacist"
-                layout="fill"
-                objectFit="cover"
-                className="opacity-20"
-                data-ai-hint="pharmacy background"
-              />
-          )}
-          <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-primary font-headline">
-              {settingsLoading ? <Skeleton className="h-12 w-3/4 mx-auto" /> : settings.appName}
-            </h1>
-            <p className="mx-auto max-w-[700px] text-foreground/80 md:text-xl mt-4">
-              Get your prescriptions and health products delivered to your doorstep. Fast, reliable, and convenient.
-            </p>
-            <div className="mt-8">
-              <Link href="/products">
-                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                  Shop Now
-                </Button>
-              </Link>
+        <section className="w-full py-6 md:py-12">
+            <div className="container mx-auto px-4 md:px-6">
+                 <div className="relative rounded-lg overflow-hidden h-[500px] flex items-center justify-center text-center p-8">
+                     {settingsLoading ? (
+                         <Skeleton className="absolute inset-0" />
+                     ) : (
+                         <>
+                             <Image
+                                 src={settings.heroImageUrl || "https://placehold.co/1920x1080.png"}
+                                 alt="Pharmacist"
+                                 layout="fill"
+                                 objectFit="cover"
+                                 className="z-0"
+                                 data-ai-hint="pharmacy background"
+                             />
+                             <div className="absolute inset-0 bg-black/50 z-10" />
+                         </>
+                     )}
+                     <div className="relative z-20">
+                         <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white font-headline">
+                           {settingsLoading ? <Skeleton className="h-12 w-3/4 mx-auto bg-white/20" /> : settings.appName}
+                         </h1>
+                         <p className="mx-auto max-w-[700px] text-white/90 md:text-xl mt-4">
+                           Get your prescriptions and health products delivered to your doorstep. Fast, reliable, and convenient.
+                         </p>
+                         <div className="mt-8">
+                           <Link href="/products">
+                             <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                               Shop Now
+                             </Button>
+                           </Link>
+                         </div>
+                     </div>
+                 </div>
             </div>
-          </div>
         </section>
 
         <section className="w-full py-12 md:py-24 lg:py-32">
