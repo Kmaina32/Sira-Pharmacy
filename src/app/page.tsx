@@ -56,7 +56,7 @@ export default function HomePage() {
                     ) : (
                         <>
                             <Image
-                                src="https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"
+                                src={settings.heroImageUrl || "https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"}
                                 alt="Pharmacist"
                                 layout="fill"
                                 objectFit="cover"

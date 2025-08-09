@@ -7,7 +7,7 @@ const ThemeUpdater = () => {
   const { settings, loading } = useSettings();
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && document.documentElement) {
       document.documentElement.style.setProperty('--primary', settings.primaryColor);
       document.documentElement.style.setProperty('--accent', settings.accentColor);
     }
