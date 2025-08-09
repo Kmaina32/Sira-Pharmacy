@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -26,7 +27,7 @@ const checkoutSchema = z.object({
   phone: z.string().min(10, 'Invalid phone number'),
   address: z.string().min(5, 'Address is too short'),
   city: z.string().min(2, 'City is required'),
-  paymentMethod: z.enum(['mpesa', 'paypal', 'card'], {
+  paymentMethod: z.enum(['mpesa', 'paypal', 'card', 'stripe'], {
     required_error: 'You need to select a payment method.',
   }),
 });
@@ -144,6 +145,10 @@ export default function CheckoutPage() {
                                 <RadioGroupItem value="card" id="card" />
                                 <Label htmlFor="card" className="font-medium text-lg flex-1 cursor-pointer">Credit/Debit Card</Label>
                             </div>
+                            <div className="flex items-center space-x-3 p-4 border rounded-md has-[[data-state=checked]]:border-primary">
+                                <RadioGroupItem value="stripe" id="stripe" />
+                                <Label htmlFor="stripe" className="font-medium text-lg flex-1 cursor-pointer">Stripe</Label>
+                            </div>
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
@@ -179,3 +184,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

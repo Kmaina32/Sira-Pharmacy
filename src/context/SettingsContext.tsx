@@ -12,6 +12,8 @@ interface Settings {
     primaryColor: string;
     accentColor: string;
     whatsAppNumber?: string;
+    stripePublishableKey?: string;
+    paypalClientId?: string;
 }
 
 interface SettingsContextType {
@@ -26,6 +28,8 @@ const defaultSettings: Settings = {
     primaryColor: '210 70% 50%',
     accentColor: '180 60% 40%',
     whatsAppNumber: '254757586253',
+    stripePublishableKey: '',
+    paypalClientId: '',
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
