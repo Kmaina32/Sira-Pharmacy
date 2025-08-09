@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
+import 'react-phone-number-input/style.css'
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 import { AuthProvider } from '@/context/AuthContext';
