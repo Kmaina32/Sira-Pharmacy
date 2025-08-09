@@ -32,7 +32,7 @@ export default function HomePage() {
 
   const featuredProducts = products.slice(0, 8);
   const categories = [
-    { name: 'Medication', icon: Pill, href: '/products?category=medication', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'assorted pills' },
+    { name: 'Medication', icon: Pill, href: '/products?category=medication', imageUrl: 'https://firstaidforlife.org.uk/wp-content/uploads/2018/03/poisoning-pill-bottle-1080x720.jpg', aiHint: 'assorted pills' },
     { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'yoga meditation' },
     { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'happy baby' },
     { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'first-aid kit' },
