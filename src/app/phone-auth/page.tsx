@@ -68,10 +68,10 @@ export default function PhoneAuthPage() {
 
   return (
      <div className="relative flex items-center justify-center min-h-screen w-full">
-       {!settingsLoading && (
+       {!settingsLoading && settings.heroImageUrl && (
          <>
             <Image
-                src={settings.heroImageUrl || "https://placehold.co/1200x800.png"}
+                src={settings.heroImageUrl}
                 alt="Pharmacy background"
                 layout="fill"
                 objectFit="cover"

@@ -56,7 +56,7 @@ export default function HomePage() {
                     ) : (
                         <>
                             <Image
-                                src={settings.heroImageUrl || "https://placehold.co/1200x500.png"}
+                                src={settings.heroImageUrl}
                                 alt="Pharmacist"
                                 layout="fill"
                                 objectFit="cover"
