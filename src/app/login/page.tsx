@@ -73,7 +73,7 @@ export default function LoginPage() {
   return (
     <div className="relative flex items-center justify-center min-h-screen w-full">
         <Image
-            src="https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"
+            src={settings.heroImageUrl}
             alt="Pharmacy background"
             fill
             style={{objectFit: 'cover'}}
