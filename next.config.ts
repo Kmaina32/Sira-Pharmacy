@@ -58,6 +58,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.clipartmax.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ebayimg.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
