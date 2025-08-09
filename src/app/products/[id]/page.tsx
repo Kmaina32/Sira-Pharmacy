@@ -55,7 +55,7 @@ export default function ProductDetailPage() {
             <AppHeader />
             <main className="flex-1 container mx-auto px-4 md:px-6 py-8">
                 <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-                    <Skeleton className="w-full h-[500px] rounded-lg" />
+                    <Skeleton className="w-full h-80 md:h-[500px] rounded-lg" />
                     <div className="space-y-4">
                         <Skeleton className="h-10 w-3/4" />
                         <Skeleton className="h-8 w-1/4" />
@@ -105,7 +105,7 @@ export default function ProductDetailPage() {
               alt={product.name}
               width={500}
               height={500}
-              className="object-cover transition-transform duration-300 hover:scale-105"
+              className="object-cover transition-transform duration-300 hover:scale-105 w-full h-auto aspect-square"
               data-ai-hint={product.aiHint}
             />
           </div>
@@ -141,11 +141,11 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button onClick={handleAddToCart} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg">
+                <Button onClick={handleAddToCart} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-base md:text-lg">
                     Add to Cart
                 </Button>
                 {settings.whatsAppNumber && (
-                    <Button onClick={handleWhatsAppPurchase} size="lg" variant="outline" className="w-full text-lg">
+                    <Button onClick={handleWhatsAppPurchase} size="lg" variant="outline" className="w-full text-base md:text-lg">
                         <WhatsAppIcon className="w-5 h-5 mr-2" />
                         Purchase via WhatsApp
                     </Button>

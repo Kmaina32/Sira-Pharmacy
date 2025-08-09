@@ -100,10 +100,9 @@ export default function AdminOrdersPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
-                <TableHead className="hidden md:table-cell">Date</TableHead>
-                <TableHead>Total</TableHead>
+                <TableHead className="hidden sm:table-cell">Date</TableHead>
+                <TableHead className="hidden md:table-cell">Total</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
@@ -113,12 +112,14 @@ export default function AdminOrdersPage() {
             <TableBody>
               {orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id.substring(0, 7)}...</TableCell>
-                  <TableCell>{order.customerName}</TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell>
+                    <div className="font-medium">{order.customerName}</div>
+                    <div className="text-xs text-muted-foreground md:hidden">{order.id.substring(0, 7)}...</div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     {order.createdAt?.toDate().toLocaleDateString()}
                   </TableCell>
-                  <TableCell>{formatCurrency(order.total)}</TableCell>
+                  <TableCell className="hidden md:table-cell">{formatCurrency(order.total)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusVariant(order.status) as any}>{order.status}</Badge>
                   </TableCell>
@@ -134,7 +135,7 @@ export default function AdminOrdersPage() {
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                             <Select onValueChange={(value) => handleStatusChange(order.id, value)} defaultValue={order.status}>
                                 <SelectTrigger className="w-full border-0 focus:ring-0">
-                                    Update Status
+                                    <SelectValue placeholder="Update Status" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Processing">Processing</SelectItem>

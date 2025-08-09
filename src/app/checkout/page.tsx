@@ -99,7 +99,7 @@ export default function CheckoutPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <AppHeader />
-            <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
                 <h1 className="text-2xl font-semibold">Your cart is empty.</h1>
                 <p className="text-muted-foreground mt-2">Add some products to your cart before you can checkout.</p>
                 <Button onClick={() => router.push('/products')} className="mt-4">
@@ -116,7 +116,7 @@ export default function CheckoutPage() {
       <main className="flex-1 container mx-auto px-4 md:px-6 py-8">
         <h1 className="text-3xl md:text-4xl font-bold font-headline text-primary mb-8 text-center">Checkout</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid md:grid-cols-3 gap-12">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid md:grid-cols-3 gap-8 md:gap-12">
             <div className="md:col-span-2 space-y-8">
               <Card>
                 <CardHeader><CardTitle className="font-headline">1. Shipping Information</CardTitle></CardHeader>
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
                         <div className="flex flex-col space-y-4">
                            <Label htmlFor="mpesa" className="flex items-center p-4 border rounded-md cursor-pointer has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:shadow-md">
                               <RadioGroupItem value="mpesa" id="mpesa" className="mr-4"/>
-                              <Image src="https://www.clipartmax.com/png/full/229-2293241_while-m-pesa-logo.png" alt="M-Pesa" width={80} height={25} objectFit="contain" />
+                              <Image src="https://www.clipartmax.com/png/full/229-2293241_while-m-pesa-logo.png" alt="M-Pesa" width={80} height={25} className="object-contain" />
                               <span className="ml-4 font-medium flex-1">Pay with M-Pesa</span>
                           </Label>
                           {paymentMethod === 'mpesa' && (
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
                           )}
                           <Label htmlFor="card" className="flex items-center p-4 border rounded-md cursor-pointer has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:shadow-md">
                               <RadioGroupItem value="card" id="card" className="mr-4"/>
-                              <Image src="https://www.citypng.com/public/uploads/preview/hd-mastercard-payment-logo-transparent-background-701751694777780z7xaiuu0sh.png" alt="Card" width={40} height={25} objectFit="contain" />
+                              <Image src="https://www.citypng.com/public/uploads/preview/hd-mastercard-payment-logo-transparent-background-701751694777780z7xaiuu0sh.png" alt="Card" width={40} height={25} className="object-contain" />
                               <span className="ml-4 font-medium flex-1">Credit/Debit Card</span>
                           </Label>
                            {paymentMethod === 'card' && (
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
                           )}
                            <Label htmlFor="paypal" className="flex items-center p-4 border rounded-md cursor-pointer has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:shadow-md">
                               <RadioGroupItem value="paypal" id="paypal" className="mr-4"/>
-                              <Image src="https://www.citypng.com/public/uploads/preview/transparent-hd-paypal-logo-701751694777788ilpzr3lary.png" alt="PayPal" width={80} height={25} objectFit="contain" />
+                              <Image src="https://www.citypng.com/public/uploads/preview/transparent-hd-paypal-logo-701751694777788ilpzr3lary.png" alt="PayPal" width={80} height={25} className="object-contain" />
                               <span className="ml-4 font-medium flex-1">Pay with PayPal</span>
                           </Label>
                           {paymentMethod === 'paypal' && (
@@ -192,7 +192,7 @@ export default function CheckoutPage() {
                           )}
                           <Label htmlFor="stripe" className="flex items-center p-4 border rounded-md cursor-pointer has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:shadow-md">
                             <RadioGroupItem value="stripe" id="stripe" className="mr-4"/>
-                            <Image src="https://www.citypng.com/public/uploads/preview/hd-stripe-official-logo-png-701751694777755j0aa3puxte.png" alt="Stripe" width={60} height={25} objectFit="contain" />
+                            <Image src="https://www.citypng.com/public/uploads/preview/hd-stripe-official-logo-png-701751694777755j0aa3puxte.png" alt="Stripe" width={60} height={25} className="object-contain" />
                             <span className="ml-4 font-medium flex-1">Pay with Stripe</span>
                           </Label>
                            {paymentMethod === 'stripe' && (

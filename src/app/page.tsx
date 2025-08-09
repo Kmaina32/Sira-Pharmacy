@@ -43,7 +43,7 @@ export default function HomePage() {
       <main className="flex-1">
         <section className="w-full py-6 md:py-12">
             <div className="container mx-auto px-4 md:px-6">
-                 <div className="relative rounded-lg overflow-hidden h-[500px] flex items-center justify-center text-center p-8">
+                 <div className="relative rounded-lg overflow-hidden h-[400px] md:h-[500px] flex items-center justify-center text-center p-4 md:p-8">
                     {settingsLoading ? (
                         <Skeleton className="absolute inset-0" />
                     ) : (
@@ -63,7 +63,7 @@ export default function HomePage() {
                          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white font-headline">
                            {settingsLoading ? <Skeleton className="h-12 w-3/4 mx-auto bg-white/20" /> : settings.appName}
                          </h1>
-                         <p className="mx-auto max-w-[700px] text-white/90 md:text-xl mt-4">
+                         <p className="mx-auto max-w-[700px] text-white/90 md:text-xl mt-4 text-base">
                            Get your prescriptions and health products delivered to your doorstep. Fast, reliable, and convenient.
                          </p>
                          <div className="mt-8">
@@ -81,11 +81,11 @@ export default function HomePage() {
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter text-center mb-12 font-headline">Shop by Category</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {categories.map((category) => (
                 <Link key={category.name} href={category.href} className="group">
                     <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                        <div className="relative h-48">
+                        <div className="relative h-40 md:h-48">
                             <Image
                                 src={category.imageUrl}
                                 alt={category.name}
@@ -131,7 +131,7 @@ export default function HomePage() {
                         </Link>
                     </CardHeader>
                     <CardContent className="p-4 flex-1 flex flex-col">
-                        <CardTitle className="text-lg font-headline mb-2">{product.name}</CardTitle>
+                        <CardTitle className="text-base md:text-lg font-headline mb-2">{product.name}</CardTitle>
                         <p className="text-sm text-muted-foreground flex-1">{product.description.substring(0, 60)}...</p>
                         <p className="text-lg font-bold text-primary mt-2">{formatCurrency(product.price)}</p>
                     </CardContent>
