@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { Product } from '@/lib/placeholder-data';
 import AppHeader from '@/components/AppHeader';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/context/CartContext';
 import { formatCurrency } from '@/lib/utils';
-import { Minus, Plus, ShieldCheck, Truck } from 'lucide-react';
+import { Minus, Plus, ShieldCheck, Truck, ArrowLeft } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -28,6 +28,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const params = useParams();
+  const router = useRouter();
   const productId = params.id as string;
 
   useEffect(() => {
@@ -89,6 +90,12 @@ export default function ProductDetailPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <AppHeader />
       <main className="flex-1 container mx-auto px-4 md:px-6 py-8">
+        <div className="mb-6">
+            <Button variant="outline" onClick={() => router.back()}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Products
+            </Button>
+        </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           <div className="flex items-center justify-center bg-card rounded-lg overflow-hidden shadow-md">
             <Image

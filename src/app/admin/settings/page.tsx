@@ -127,7 +127,7 @@ export default function AdminSettingsPage() {
               <FormField control={form.control} name="whatsAppNumber" render={({ field }) => (
                 <FormItem>
                   <FormLabel>WhatsApp Number</FormLabel>
-                  <FormControl><Input {...field} placeholder="e.g. 254712345678" /></FormControl>
+                  <FormControl><Input {...field} placeholder="e.g. 254757586253" /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
