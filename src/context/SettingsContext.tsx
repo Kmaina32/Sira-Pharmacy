@@ -27,7 +27,7 @@ const defaultSettings: Settings = {
     heroImageUrl: 'https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg',
     primaryColor: '210 70% 50%',
     accentColor: '180 60% 40%',
-    whatsAppNumber: '254757586253',
+    whatsAppNumber: '+254757586253',
     stripePublishableKey: '',
     paypalClientId: '',
 };
@@ -45,6 +45,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       if (docSnap.exists()) {
         setSettings({ ...defaultSettings, ...docSnap.data() });
       } else {
+        // If no settings in DB, use the default including the correct hero
         setSettings(defaultSettings);
       }
       setLoading(false);
