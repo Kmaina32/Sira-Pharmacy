@@ -76,8 +76,7 @@ export default function LoginPage() {
             src={settings.heroImageUrl}
             alt="Pharmacy background"
             fill
-            style={{objectFit: 'cover'}}
-            className="z-0"
+            className="object-cover z-0"
             priority
         />
         <div className="absolute inset-0 bg-black/60 z-10" />

@@ -18,7 +18,7 @@ interface Settings {
 
 const defaultSettings: Settings = {
     appName: 'Sira Pharmacy',
-    heroImageUrl: 'https://placehold.co/1920x1080.png',
+    heroImageUrl: 'https://images.unsplash.com/photo-1576683545629-17861be41253?q=80&w=2070&auto=format&fit=crop',
     primaryColor: '210 70% 50%',
     accentColor: '180 60% 40%',
     whatsAppNumber: '+254757586253',
