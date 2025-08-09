@@ -49,7 +49,7 @@ export default function HomePage() {
                     ) : (
                         <>
                             <Image
-                                src={settings.heroImageUrl || "https://placehold.co/1920x1080.png"}
+                                src="https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"
                                 alt="Pharmacist"
                                 layout="fill"
                                 objectFit="cover"
