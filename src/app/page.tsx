@@ -15,6 +15,7 @@ import { formatCurrency } from '@/lib/utils';
 import { useSettings } from '@/context/SettingsContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppFooter from '@/components/AppFooter';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -83,7 +84,42 @@ export default function HomePage() {
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter text-center mb-12 font-headline">Shop by Category</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            
+            <div className="sm:hidden">
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {categories.map((category) => (
+                    <CarouselItem key={category.name} className="basis-2/3">
+                      <Link href={category.href} className="group p-1">
+                        <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+                          <div className="relative h-40">
+                            <Image
+                              src={category.imageUrl}
+                              alt={category.name}
+                              layout="fill"
+                              objectFit="cover"
+                              className="transition-transform duration-300 group-hover:scale-105"
+                              data-ai-hint={category.aiHint}
+                            />
+                          </div>
+                          <CardContent className="p-4 text-center">
+                            <CardTitle className="font-headline text-lg">{category.name}</CardTitle>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+            
+            <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {categories.map((category) => (
                 <Link key={category.name} href={category.href} className="group">
                     <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
