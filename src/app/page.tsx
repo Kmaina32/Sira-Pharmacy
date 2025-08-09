@@ -63,6 +63,7 @@ export default function HomePage() {
                                 className="z-0"
                                 data-ai-hint="pharmacy background"
                                 priority
+                                sizes="100vw"
                             />
                             <div className="absolute inset-0 bg-black/50 z-10" />
                         </>
@@ -111,6 +112,7 @@ export default function HomePage() {
                               src={category.imageUrl}
                               alt={category.name}
                               fill
+                              sizes="100vw"
                               style={{objectFit: 'cover'}}
                               className="transition-transform duration-300 group-hover:scale-105"
                               data-ai-hint={category.aiHint}
@@ -136,6 +138,7 @@ export default function HomePage() {
                                 src={category.imageUrl}
                                 alt={category.name}
                                 fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                                 style={{objectFit: 'cover'}}
                                 className="transition-transform duration-300 group-hover:scale-105"
                                 data-ai-hint={category.aiHint}
