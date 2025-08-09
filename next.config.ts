@@ -88,6 +88,12 @@ const nextConfig: NextConfig = {
         hostname: 'orthohub.co.ke',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.shekhawatihospital.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

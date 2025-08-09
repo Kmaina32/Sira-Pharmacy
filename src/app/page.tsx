@@ -35,7 +35,7 @@ export default function HomePage() {
     { name: 'Medication', icon: Pill, href: '/products?category=medication', imageUrl: 'https://firstaidforlife.org.uk/wp-content/uploads/2018/03/poisoning-pill-bottle-1080x720.jpg', aiHint: 'assorted pills' },
     { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness', imageUrl: 'https://www.newfoodmagazine.com/wp-content/uploads/health-and-wellness.jpg', aiHint: 'yoga meditation' },
     { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care', imageUrl: 'https://www.lullabytrust.org.uk/wp-content/uploads/2025/01/Hero-sub-hero-feature-banner-41-aspect-ratio-1280-720-1024x680-c-default.webp', aiHint: 'happy baby' },
-    { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid', imageUrl: 'https://placehold.co/600x400.png', aiHint: 'first-aid kit' },
+    { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid', imageUrl: 'https://www.shekhawatihospital.com/wp-content/uploads/2022/03/first-aid.jpg', aiHint: 'first-aid kit' },
   ];
 
   return (
