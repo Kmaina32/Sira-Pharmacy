@@ -18,7 +18,7 @@ interface Settings {
 
 const defaultSettings: Settings = {
     appName: 'Sira Pharmacy',
-    heroImageUrl: 'https://images.unsplash.com/photo-1576671081833-49e5c89a9c8b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    heroImageUrl: 'https://images.unsplash.com/photo-1584982234381-0f49a1548a3e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     primaryColor: '210 70% 50%',
     accentColor: '180 60% 40%',
     whatsAppNumber: '+254757586253',
