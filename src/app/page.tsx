@@ -58,8 +58,8 @@ export default function HomePage() {
                             <Image
                                 src={settings.heroImageUrl}
                                 alt="Pharmacist"
-                                layout="fill"
-                                objectFit="cover"
+                                fill
+                                style={{objectFit: 'cover'}}
                                 className="z-0"
                                 data-ai-hint="pharmacy background"
                                 priority
@@ -110,8 +110,8 @@ export default function HomePage() {
                             <Image
                               src={category.imageUrl}
                               alt={category.name}
-                              layout="fill"
-                              objectFit="cover"
+                              fill
+                              style={{objectFit: 'cover'}}
                               className="transition-transform duration-300 group-hover:scale-105"
                               data-ai-hint={category.aiHint}
                             />
@@ -135,8 +135,8 @@ export default function HomePage() {
                             <Image
                                 src={category.imageUrl}
                                 alt={category.name}
-                                layout="fill"
-                                objectFit="cover"
+                                fill
+                                style={{objectFit: 'cover'}}
                                 className="transition-transform duration-300 group-hover:scale-105"
                                 data-ai-hint={category.aiHint}
                             />
