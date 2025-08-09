@@ -23,7 +23,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { settings, loading: settingsLoading } = useSettings();
-  const plugin = useRef(
+   const plugin = useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
 
@@ -56,7 +56,7 @@ export default function HomePage() {
                     ) : (
                         <>
                             <Image
-                                src={settings.heroImageUrl || "https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"}
+                                src={settings.heroImageUrl || "https://placehold.co/1200x500.png"}
                                 alt="Pharmacist"
                                 layout="fill"
                                 objectFit="cover"
@@ -103,7 +103,7 @@ export default function HomePage() {
               >
                 <CarouselContent>
                   {categories.map((category) => (
-                    <CarouselItem key={category.name}>
+                    <CarouselItem key={category.name} className="basis-full">
                       <Link href={category.href} className="group p-1">
                         <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
                           <div className="relative h-40">

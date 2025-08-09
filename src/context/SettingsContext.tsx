@@ -16,15 +16,9 @@ interface Settings {
     paypalClientId?: string;
 }
 
-interface SettingsContextType {
-  settings: Settings;
-  loading: boolean;
-  updateSettings: (newSettings: Partial<Settings>) => Promise<void>;
-}
-
 const defaultSettings: Settings = {
     appName: 'Sira Pharmacy',
-    heroImageUrl: 'https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg',
+    heroImageUrl: 'https://placehold.co/1200x500.png',
     primaryColor: '210 70% 50%',
     accentColor: '180 60% 40%',
     whatsAppNumber: '+254757586253',
@@ -33,6 +27,12 @@ const defaultSettings: Settings = {
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+
+interface SettingsContextType {
+  settings: Settings;
+  loading: boolean;
+  updateSettings: (newSettings: Partial<Settings>) => Promise<void>;
+}
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);

@@ -71,7 +71,7 @@ export default function PhoneAuthPage() {
        {!settingsLoading && (
          <>
             <Image
-                src={settings.heroImageUrl || "https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"}
+                src={settings.heroImageUrl || "https://placehold.co/1200x800.png"}
                 alt="Pharmacy background"
                 layout="fill"
                 objectFit="cover"
