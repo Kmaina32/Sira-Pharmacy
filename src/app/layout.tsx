@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { SettingsProvider } from '@/context/SettingsContext';
 import ThemeUpdater from '@/components/ThemeUpdater';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
+import NewsletterPopup from '@/components/NewsletterPopup';
 
 export const metadata: Metadata = {
   title: 'Sira Pharmacy Online',
@@ -34,6 +35,7 @@ export default function RootLayout({
                     {children}
                     <Toaster />
                     <CookieConsentBanner />
+                    <NewsletterPopup />
                 </CartProvider>
             </SettingsProvider>
         </AuthProvider>

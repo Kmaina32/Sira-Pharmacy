@@ -13,31 +13,6 @@ import { useState } from 'react';
 
 const AppFooter = () => {
     const { settings } = useSettings();
-    const { toast } = useToast();
-    const [email, setEmail] = useState('');
-    const [isSubscribing, setIsSubscribing] = useState(false);
-
-    const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!email) {
-            toast({ title: 'Email required', description: 'Please enter your email address.', variant: 'destructive' });
-            return;
-        }
-        setIsSubscribing(true);
-        try {
-            await addDoc(collection(db, 'newsletter'), {
-                email,
-                subscribedAt: serverTimestamp(),
-            });
-            toast({ title: 'Subscribed!', description: 'Thanks for joining our newsletter.' });
-            setEmail('');
-        } catch (error) {
-            console.error("Error subscribing to newsletter:", error);
-            toast({ title: 'Subscription Failed', description: 'Could not subscribe. Please try again.', variant: 'destructive' });
-        } finally {
-            setIsSubscribing(false);
-        }
-    };
 
     return (
         <footer className="bg-secondary text-secondary-foreground py-12">
@@ -56,25 +31,17 @@ const AppFooter = () => {
                     <ul className="mt-2 space-y-1">
                         <li><Link href="/about" className="text-sm hover:text-primary">About Us</Link></li>
                         <li><Link href="/products" className="text-sm hover:text-primary">Products</Link></li>
-                        <li><Link href="/contact" className="text-sm hover:text-primary">Contact</Link></li>
+                        <li><Link href="/privacy-policy" className="text-sm hover:text-primary">Privacy Policy</Link></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold font-headline">Newsletter</h3>
-                    <p className="text-sm mt-2">Stay up to date with our latest news and offers.</p>
-                    <form className="flex gap-2 mt-4" onSubmit={handleNewsletterSubmit}>
-                        <Input 
-                            type="email" 
-                            placeholder="Enter your email" 
-                            className="bg-background flex-1"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={isSubscribing}
-                        />
-                        <Button type="submit" disabled={isSubscribing}>
-                            {isSubscribing ? 'Subscribing...' : 'Subscribe'}
-                        </Button>
-                    </form>
+                    <h3 className="text-lg font-bold font-headline">Contact Us</h3>
+                     <ul className="mt-2 space-y-1">
+                        {settings.whatsAppNumber && (
+                           <li><a href={`https://wa.me/${settings.whatsAppNumber}`} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">WhatsApp</a></li>
+                        )}
+                        <li><Link href="/about" className="text-sm hover:text-primary">Our Story</Link></li>
+                    </ul>
                 </div>
             </div>
         </footer>
