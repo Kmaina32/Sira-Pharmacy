@@ -103,7 +103,7 @@ export default function HomePage() {
               >
                 <CarouselContent>
                   {categories.map((category) => (
-                    <CarouselItem key={category.name} className="basis-2/3">
+                    <CarouselItem key={category.name}>
                       <Link href={category.href} className="group p-1">
                         <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
                           <div className="relative h-40">
