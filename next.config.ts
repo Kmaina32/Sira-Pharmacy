@@ -76,6 +76,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.newfoodmagazine.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.lullabytrust.org.uk',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
