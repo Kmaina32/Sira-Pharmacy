@@ -15,6 +15,7 @@ import { useSettings } from '@/context/SettingsContext';
 import PhoneInput from 'react-phone-number-input';
 import { E164Number } from 'libphonenumber-js/types';
 import type { ConfirmationResult } from 'firebase/auth';
+import Image from 'next/image';
 
 export default function PhoneAuthPage() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function PhoneAuthPage() {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { settings } = useSettings();
+  const { settings, loading: settingsLoading } = useSettings();
 
   const handleSendCode = async () => {
     if (!phone) {
@@ -66,8 +67,20 @@ export default function PhoneAuthPage() {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-secondary">
-      <Card className="w-full max-w-md mx-4">
+     <div className="relative flex items-center justify-center min-h-screen w-full">
+       {!settingsLoading && (
+         <>
+            <Image
+                src={settings.heroImageUrl || "https://antdisplay.com/pub/media/furniture/022e9691c5ba65d23cbf27a53f83163e.jpg"}
+                alt="Pharmacy background"
+                layout="fill"
+                objectFit="cover"
+                className="z-0"
+            />
+            <div className="absolute inset-0 bg-black/60 z-10" />
+         </>
+       )}
+      <Card className="w-full max-w-md mx-4 z-20">
         <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
             <Syringe className="h-8 w-8 text-primary" />
@@ -110,4 +123,3 @@ export default function PhoneAuthPage() {
     </div>
   );
 }
-
