@@ -68,15 +68,17 @@ export default function PhoneAuthPage() {
 
   return (
      <div className="relative flex items-center justify-center min-h-screen w-full">
-        <Image
-            src={settings.heroImageUrl}
-            alt="Pharmacy background"
-            fill
-            style={{objectFit: 'cover'}}
-            className="z-0"
-            priority
-            sizes="100vw"
-        />
+        {settings.heroImageUrl && (
+            <Image
+                src={settings.heroImageUrl}
+                alt="Pharmacy background"
+                fill
+                style={{objectFit: 'cover'}}
+                className="z-0"
+                priority
+                sizes="100vw"
+            />
+        )}
         <div className="absolute inset-0 bg-black/60 z-10" />
       <Card className="w-full max-w-md mx-4 z-20">
         <CardHeader className="text-center">

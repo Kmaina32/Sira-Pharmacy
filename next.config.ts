@@ -106,6 +106,12 @@ const nextConfig: NextConfig = {
         hostname: 'zikampharmacy.com',
         port: '',
         pathname: '/**',
+      },
+      {
+          protocol: "https",
+          hostname: "firebasestorage.googleapis.com",
+          port: "",
+          pathname: "/**",
       }
     ],
   },
