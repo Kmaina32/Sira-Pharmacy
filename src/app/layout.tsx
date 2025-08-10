@@ -11,6 +11,7 @@ import ThemeUpdater from '@/components/ThemeUpdater';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import NewsletterPopup from '@/components/NewsletterPopup';
 import UserTutorial from '@/components/UserTutorial';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: 'Sira Pharmacy Online',
@@ -43,6 +44,7 @@ export default function RootLayout({
             </SettingsProvider>
         </AuthProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
