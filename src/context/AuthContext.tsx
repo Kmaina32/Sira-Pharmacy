@@ -28,7 +28,6 @@ const saveUserToDb = async (user: User) => {
     try {
         const userDoc = await getDoc(userRef);
         // Use setDoc with merge:true to create or update.
-        // This is more robust than checking for existence first.
         if (!userDoc.exists()) {
              await setDoc(userRef, {
                 uid: user.uid,
@@ -37,11 +36,9 @@ const saveUserToDb = async (user: User) => {
                 photoURL: user.photoURL,
                 phoneNumber: user.phoneNumber,
                 createdAt: new Date().toISOString(),
-                // Setting isAdmin to false by default for new users
                 isAdmin: false,
             }, { merge: true });
         } else {
-            // If user exists, merge new info, but be careful not to overwrite roles
             await setDoc(userRef, {
                 email: user.email,
                 displayName: user.displayName,
@@ -86,11 +83,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, { displayName });
     
-    // Manually update the user in state to ensure UI consistency
     const updatedUser = { ...userCredential.user, displayName };
     await saveUserToDb(updatedUser as User);
+
+    // Flag this as a new user so the tutorial can be shown on first login
+    localStorage.setItem('is_new_user', 'true');
     
-    // The listener will also run, but this ensures immediate consistency
     setUser(userCredential.user);
     const idTokenResult = await userCredential.user.getIdTokenResult(true);
     setIsAdmin(!!idTokenResult.claims.isAdmin);
@@ -105,24 +103,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
+
+    const userRef = doc(db, 'users', result.user.uid);
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+        localStorage.setItem('is_new_user', 'true');
+    }
+
     await saveUserToDb(result.user);
-    // The onIdTokenChanged listener will handle the rest.
     return result;
   };
 
   const setupRecaptcha = (elementId: string) => {
-    // Ensure we don't create multiple instances
     if ((window as any).recaptchaVerifier) {
       (window as any).recaptchaVerifier.clear();
     }
     const recaptchaVerifier = new RecaptchaVerifier(auth, elementId, {
       'size': 'invisible',
-      'callback': (response: any) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-      },
-      'expired-callback': () => {
-        // Response expired. Ask user to solve reCAPTCHA again.
-      }
+      'callback': (response: any) => {},
+      'expired-callback': () => {}
     });
     (window as any).recaptchaVerifier = recaptchaVerifier;
     return recaptchaVerifier;
@@ -134,8 +133,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const confirmVerificationCode = async (confirmationResult: ConfirmationResult, code: string) => {
     const result = await confirmationResult.confirm(code);
+    
+    const userRef = doc(db, 'users', result.user.uid);
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+        localStorage.setItem('is_new_user', 'true');
+    }
+
     await saveUserToDb(result.user);
-    // The onIdTokenChanged listener will handle the rest.
     return result;
   }
 

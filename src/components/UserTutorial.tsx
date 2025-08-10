@@ -8,11 +8,13 @@ import { ArrowLeft, ArrowRight, Search, LayoutGrid, ShoppingCart, User, Lightbul
 import Image from 'next/image';
 import { useSettings } from '@/context/SettingsContext';
 import { Skeleton } from './ui/skeleton';
+import { useAuth } from '@/context/AuthContext';
 
 const UserTutorial = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [step, setStep] = useState(0);
-    const { settings, loading } = useSettings();
+    const { settings, loading: settingsLoading } = useSettings();
+    const { user, loading: authLoading } = useAuth();
 
     const tutorialSteps = [
         {
@@ -53,18 +55,24 @@ const UserTutorial = () => {
     ];
 
     useEffect(() => {
-        const tutorialSeen = localStorage.getItem('pharmacy_tutorial_seen');
-        if (!tutorialSeen) {
-            setIsOpen(true);
+        // Show tutorial if the user has just signed up
+        if (user && !authLoading) {
+            const isNewUser = localStorage.getItem('is_new_user');
+            if (isNewUser) {
+                setIsOpen(true);
+                // Important: remove the flag so it doesn't show again
+                localStorage.removeItem('is_new_user');
+            }
         }
 
+        // Allow manual trigger via footer link
         const handleShowTutorial = () => setIsOpen(true);
         window.addEventListener('show-tutorial', handleShowTutorial);
 
         return () => {
              window.removeEventListener('show-tutorial', handleShowTutorial);
         }
-    }, []);
+    }, [user, authLoading]);
 
     const handleNext = () => {
         if (step < tutorialSteps.length - 1) {
@@ -81,7 +89,6 @@ const UserTutorial = () => {
     };
 
     const handleClose = () => {
-        localStorage.setItem('pharmacy_tutorial_seen', 'true');
         setIsOpen(false);
         // Reset to first step for next time it's opened manually
         setTimeout(() => setStep(0), 300);
@@ -104,7 +111,7 @@ const UserTutorial = () => {
                 </DialogHeader>
                 
                 <div className="mt-4 mb-6 text-center">
-                    {loading ? (
+                    {settingsLoading ? (
                         <Skeleton className="h-[200px] w-full rounded-lg" />
                     ) : (
                         <Image
