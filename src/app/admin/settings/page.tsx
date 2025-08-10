@@ -8,7 +8,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -106,8 +106,11 @@ export default function AdminSettingsPage() {
                         
                         <FormField control={form.control} name="heroImageUrl" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Hero Image URL</FormLabel>
+                                <FormLabel>Hero &amp; Auth Background Image URL</FormLabel>
                                 <FormControl><Input {...field} placeholder="https://example.com/image.png" /></FormControl>
+                                <FormDescription>
+                                    This image is for the homepage hero and the login/signup page backgrounds.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />
