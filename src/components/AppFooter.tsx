@@ -15,17 +15,17 @@ const AppFooter = () => {
 
     return (
         <footer className="bg-secondary text-secondary-foreground py-8">
-            <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-8 text-center md:text-left">
-                <div className="md:col-span-1">
-                    <h3 className="text-lg font-bold font-headline text-primary">{settings.appName}</h3>
-                    <p className="text-sm mt-2">&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
-                </div>
-                <div className="md:col-span-1 flex flex-col items-center md:items-end gap-4">
-                     <div className="flex justify-center md:justify-start gap-4">
-                        <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
+            <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex flex-col items-center md:items-start">
+                    <div className="flex items-center gap-4">
+                         <h3 className="text-lg font-bold font-headline text-primary">{settings.appName}</h3>
+                         <Link href="https://www.instagram.com/reel/DLuL3ufKRs6/?utm_source=ig_web_copy_link" target="_blank" rel="noopener noreferrer">
                             <Instagram className="h-6 w-6 text-muted-foreground hover:text-primary" />
                         </Link>
                     </div>
+                    <p className="text-sm mt-2">&copy; {new Date().getFullYear()} {settings.appName}. All rights reserved.</p>
+                </div>
+                <div className="flex items-center gap-4">
                     <Button variant="ghost" size="sm" onClick={showTutorial} className="text-muted-foreground hover:text-primary">
                         <HelpCircle className="h-4 w-4 mr-2" />
                         Show Tutorial
