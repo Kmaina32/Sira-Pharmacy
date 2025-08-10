@@ -27,7 +27,8 @@ const saveUserToDb = async (user: User) => {
     const userRef = doc(db, 'users', user.uid);
     try {
         const userDoc = await getDoc(userRef);
-        // Only create the document if it doesn't exist
+        // Use setDoc with merge:true to create or update.
+        // This is more robust than checking for existence first.
         if (!userDoc.exists()) {
              await setDoc(userRef, {
                 uid: user.uid,
@@ -38,7 +39,7 @@ const saveUserToDb = async (user: User) => {
                 createdAt: serverTimestamp(),
                 // Setting isAdmin to false by default for new users
                 isAdmin: false,
-            });
+            }, { merge: true });
         }
     } catch (error) {
         console.error("Error saving user to Firestore:", error);
@@ -52,15 +53,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+    const unsubscribe = onIdTokenChanged(auth, async (currentUser) => {
       setLoading(true);
-      if (user) {
-        // We ensure the user is in the DB when their token changes.
-        // This handles login, signup, and token refresh.
-        await saveUserToDb(user); 
-        const idTokenResult = await user.getIdTokenResult(true);
+      if (currentUser) {
+        await saveUserToDb(currentUser); 
+        const idTokenResult = await currentUser.getIdTokenResult(true);
         setIsAdmin(!!idTokenResult.claims.isAdmin);
-        setUser(user);
+        setUser(currentUser);
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -77,12 +76,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (email: string, password: string, displayName: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // After creation, update the profile
     await updateProfile(userCredential.user, { displayName });
-    // The onIdTokenChanged listener will handle saving the user to the DB.
-    // We force a reload of the user to make sure the latest profile data is available.
-    await userCredential.user.reload();
-    setUser(auth.currentUser);
+    // The onIdTokenChanged listener will handle saving to DB.
+    // Force a reload to ensure the new profile is active.
+    if (auth.currentUser) {
+       await auth.currentUser.reload();
+       const reloadedUser = auth.currentUser;
+       setUser(reloadedUser); // Manually set user to trigger UI update
+       await saveUserToDb(reloadedUser!);
+       const idTokenResult = await reloadedUser!.getIdTokenResult(true);
+       setIsAdmin(!!idTokenResult.claims.isAdmin);
+    }
     return userCredential;
   };
 
@@ -92,8 +96,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-    // The onIdTokenChanged listener will handle saving the user to the DB.
+    const result = await signInWithPopup(auth, provider);
+    // The onIdTokenChanged listener will handle the rest.
+    return result;
   };
 
   const setupRecaptcha = (elementId: string) => {
@@ -114,8 +119,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const confirmVerificationCode = (confirmationResult: ConfirmationResult, code: string) => {
-    return confirmationResult.confirm(code);
-    // The onIdTokenChanged listener will handle saving the user to the DB.
+    const result = confirmationResult.confirm(code);
+    // The onIdTokenChanged listener will handle the rest.
+    return result;
   }
 
   return (
