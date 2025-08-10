@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const settingsSchema = z.object({
   appName: z.string().min(3, 'App name must be at least 3 characters'),
@@ -21,6 +22,11 @@ const settingsSchema = z.object({
   heroImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   stripePublishableKey: z.string().optional().or(z.literal('')),
   paypalClientId: z.string().optional().or(z.literal('')),
+  tutorialStep1ImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  tutorialStep2ImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  tutorialStep3ImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  tutorialStep4ImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  tutorialStep5ImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
 });
 
 type SettingsFormValues = z.infer<typeof settingsSchema>;
@@ -40,6 +46,11 @@ export default function AdminSettingsPage() {
         heroImageUrl: settings.heroImageUrl,
         stripePublishableKey: settings.stripePublishableKey || '',
         paypalClientId: settings.paypalClientId || '',
+        tutorialStep1ImageUrl: settings.tutorialStep1ImageUrl || '',
+        tutorialStep2ImageUrl: settings.tutorialStep2ImageUrl || '',
+        tutorialStep3ImageUrl: settings.tutorialStep3ImageUrl || '',
+        tutorialStep4ImageUrl: settings.tutorialStep4ImageUrl || '',
+        tutorialStep5ImageUrl: settings.tutorialStep5ImageUrl || '',
     },
     resetOptions: {
       keepDirtyValues: true,
@@ -155,6 +166,77 @@ export default function AdminSettingsPage() {
                         )} />
                     </CardContent>
                 </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Onboarding Tutorial Images</CardTitle>
+                        <CardDescription>Manage the images that appear in the new user tutorial.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Accordion type="single" collapsible className="w-full">
+                            <AccordionItem value="item-1">
+                                <AccordionTrigger>Tutorial Step 1: Welcome</AccordionTrigger>
+                                <AccordionContent>
+                                     <FormField control={form.control} name="tutorialStep1ImageUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image URL for Step 1</FormLabel>
+                                            <FormControl><Input {...field} placeholder="https://example.com/welcome.png" /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </AccordionContent>
+                            </AccordionItem>
+                             <AccordionItem value="item-2">
+                                <AccordionTrigger>Tutorial Step 2: Find Products</AccordionTrigger>
+                                <AccordionContent>
+                                     <FormField control={form.control} name="tutorialStep2ImageUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image URL for Step 2</FormLabel>
+                                            <FormControl><Input {...field} placeholder="https://example.com/search.png" /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </AccordionContent>
+                            </AccordionItem>
+                             <AccordionItem value="item-3">
+                                <AccordionTrigger>Tutorial Step 3: Shop by Category</AccordionTrigger>
+                                <AccordionContent>
+                                     <FormField control={form.control} name="tutorialStep3ImageUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image URL for Step 3</FormLabel>
+                                            <FormControl><Input {...field} placeholder="https://example.com/category.png" /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </AccordionContent>
+                            </AccordionItem>
+                             <AccordionItem value="item-4">
+                                <AccordionTrigger>Tutorial Step 4: Shopping Cart</AccordionTrigger>
+                                <AccordionContent>
+                                     <FormField control={form.control} name="tutorialStep4ImageUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image URL for Step 4</FormLabel>
+                                            <FormControl><Input {...field} placeholder="https://example.com/cart.png" /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </AccordionContent>
+                            </AccordionItem>
+                             <AccordionItem value="item-5">
+                                <AccordionTrigger>Tutorial Step 5: Manage Account</AccordionTrigger>
+                                <AccordionContent>
+                                     <FormField control={form.control} name="tutorialStep5ImageUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image URL for Step 5</FormLabel>
+                                            <FormControl><Input {...field} placeholder="https://example.com/account.png" /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                    </CardContent>
+                </Card>
               
               <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save All Settings'}</Button>
             </form>
@@ -162,3 +244,5 @@ export default function AdminSettingsPage() {
     </div>
   );
 }
+
+    

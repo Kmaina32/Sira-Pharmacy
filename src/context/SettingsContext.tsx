@@ -14,6 +14,11 @@ interface Settings {
     whatsAppNumber?: string;
     stripePublishableKey?: string;
     paypalClientId?: string;
+    tutorialStep1ImageUrl?: string;
+    tutorialStep2ImageUrl?: string;
+    tutorialStep3ImageUrl?: string;
+    tutorialStep4ImageUrl?: string;
+    tutorialStep5ImageUrl?: string;
 }
 
 const defaultSettings: Settings = {
@@ -24,6 +29,11 @@ const defaultSettings: Settings = {
     whatsAppNumber: '+254757586253',
     stripePublishableKey: '',
     paypalClientId: 'AcCBMcL39fb_eXRorSbjeiD-JPUpMf8fYQo69l4yrBzIUBZTojpCPXRC1t86ZFekTRCOEJyhr3cVe_cy',
+    tutorialStep1ImageUrl: 'https://placehold.co/400x200.png',
+    tutorialStep2ImageUrl: 'https://placehold.co/400x200.png',
+    tutorialStep3ImageUrl: 'https://placehold.co/400x200.png',
+    tutorialStep4ImageUrl: 'https://placehold.co/400x200.png',
+    tutorialStep5ImageUrl: 'https://placehold.co/400x200.png',
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -80,3 +90,5 @@ export const useSettings = () => {
   }
   return context;
 };
+
+    

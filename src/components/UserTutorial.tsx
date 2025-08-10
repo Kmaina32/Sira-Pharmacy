@@ -6,48 +6,51 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { ArrowLeft, ArrowRight, Search, LayoutGrid, ShoppingCart, User, Lightbulb } from 'lucide-react';
 import Image from 'next/image';
-
-const tutorialSteps = [
-    {
-        title: 'Welcome to Your Pharmacy!',
-        description: "Let's take a quick tour to see how you can make the most of our online store.",
-        icon: Lightbulb,
-        image: 'https://placehold.co/400x200.png',
-        aiHint: 'friendly welcome illustration',
-    },
-    {
-        title: 'Find Products Easily',
-        description: 'Use the search bar at the top of the Products page to quickly find any item you need.',
-        icon: Search,
-        image: 'https://placehold.co/400x200.png',
-        aiHint: 'magnifying glass search',
-    },
-    {
-        title: 'Shop by Category',
-        description: 'Browse our curated categories to discover products for wellness, baby care, first aid, and more.',
-        icon: LayoutGrid,
-        image: 'https://placehold.co/400x200.png',
-        aiHint: 'product categories grid',
-    },
-    {
-        title: 'Your Shopping Cart',
-        description: 'Click the cart icon in the header to view your selected items, adjust quantities, and proceed to checkout.',
-        icon: ShoppingCart,
-        image: 'https://placehold.co/400x200.png',
-        aiHint: 'shopping cart icon',
-    },
-    {
-        title: 'Manage Your Account',
-        description: "Sign up or log in to track your orders, manage your shipping details, and enjoy a faster checkout experience.",
-        icon: User,
-        image: 'https://placehold.co/400x200.png',
-        aiHint: 'user profile account',
-    },
-];
+import { useSettings } from '@/context/SettingsContext';
+import { Skeleton } from './ui/skeleton';
 
 const UserTutorial = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [step, setStep] = useState(0);
+    const { settings, loading } = useSettings();
+
+    const tutorialSteps = [
+        {
+            title: 'Welcome to Your Pharmacy!',
+            description: "Let's take a quick tour to see how you can make the most of our online store.",
+            icon: Lightbulb,
+            getImageUrl: (s: typeof settings) => s.tutorialStep1ImageUrl,
+            aiHint: 'friendly welcome illustration',
+        },
+        {
+            title: 'Find Products Easily',
+            description: 'Use the search bar at the top of the Products page to quickly find any item you need.',
+            icon: Search,
+            getImageUrl: (s: typeof settings) => s.tutorialStep2ImageUrl,
+            aiHint: 'magnifying glass search',
+        },
+        {
+            title: 'Shop by Category',
+            description: 'Browse our curated categories to discover products for wellness, baby care, first aid, and more.',
+            icon: LayoutGrid,
+            getImageUrl: (s: typeof settings) => s.tutorialStep3ImageUrl,
+            aiHint: 'product categories grid',
+        },
+        {
+            title: 'Your Shopping Cart',
+            description: 'Click the cart icon in the header to view your selected items, adjust quantities, and proceed to checkout.',
+            icon: ShoppingCart,
+            getImageUrl: (s: typeof settings) => s.tutorialStep4ImageUrl,
+            aiHint: 'shopping cart icon',
+        },
+        {
+            title: 'Manage Your Account',
+            description: "Sign up or log in to track your orders, manage your shipping details, and enjoy a faster checkout experience.",
+            icon: User,
+            getImageUrl: (s: typeof settings) => s.tutorialStep5ImageUrl,
+            aiHint: 'user profile account',
+        },
+    ];
 
     useEffect(() => {
         const tutorialSeen = localStorage.getItem('pharmacy_tutorial_seen');
@@ -85,6 +88,7 @@ const UserTutorial = () => {
     };
 
     const currentStep = tutorialSteps[step];
+    const imageUrl = currentStep.getImageUrl(settings);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -100,14 +104,18 @@ const UserTutorial = () => {
                 </DialogHeader>
                 
                 <div className="mt-4 mb-6 text-center">
-                    <Image
-                        src={currentStep.image}
-                        alt={currentStep.title}
-                        width={400}
-                        height={200}
-                        className="rounded-lg object-cover mx-auto"
-                        data-ai-hint={currentStep.aiHint}
-                    />
+                    {loading ? (
+                        <Skeleton className="h-[200px] w-full rounded-lg" />
+                    ) : (
+                        <Image
+                            src={imageUrl}
+                            alt={currentStep.title}
+                            width={400}
+                            height={200}
+                            className="rounded-lg object-cover mx-auto"
+                            data-ai-hint={currentStep.aiHint}
+                        />
+                    )}
                 </div>
 
                 <DialogFooter className="flex-row justify-between w-full">
@@ -134,3 +142,5 @@ const UserTutorial = () => {
 };
 
 export default UserTutorial;
+
+    
