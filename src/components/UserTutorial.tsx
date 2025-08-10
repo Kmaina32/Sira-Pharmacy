@@ -92,7 +92,7 @@ const UserTutorial = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={handleClose}>
+            <DialogContent className="max-w-sm sm:max-w-md" onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={handleClose}>
                 <DialogHeader>
                      <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 mb-4">
                         <currentStep.icon className="h-8 w-8 text-primary" />
@@ -142,5 +142,3 @@ const UserTutorial = () => {
 };
 
 export default UserTutorial;
-
-    
