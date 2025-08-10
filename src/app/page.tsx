@@ -17,12 +17,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import AppFooter from '@/components/AppFooter';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay"
+import { useCart } from '@/context/CartContext';
 
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { settings, loading: settingsLoading } = useSettings();
+  const { addToCart } = useCart();
    const plugin = useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
@@ -42,6 +44,15 @@ export default function HomePage() {
     { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness', imageUrl: 'https://www.newfoodmagazine.com/wp-content/uploads/health-and-wellness.jpg', aiHint: 'yoga meditation' },
     { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care', imageUrl: 'https://www.lullabytrust.org.uk/wp-content/uploads/2025/01/Hero-sub-hero-feature-banner-41-aspect-ratio-1280-720-1024x680-c-default.webp', aiHint: 'happy baby' },
     { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid', imageUrl: 'https://www.shekhawatihospital.com/wp-content/uploads/2022/03/first-aid.jpg', aiHint: 'first-aid kit' },
+  ];
+   const brands = [
+    { name: 'Brand 1', logoUrl: 'https://www.webmobilefirst.com/images/logo-coca-cola.png' },
+    { name: 'Brand 2', logoUrl: 'https://www.webmobilefirst.com/images/logo-google.png' },
+    { name: 'Brand 3', logoUrl: 'https://www.webmobilefirst.com/images/logo-microsoft.png' },
+    { name: 'Brand 4', logoUrl: 'https://www.webmobilefirst.com/images/logo-samsung.png' },
+    { name: 'Brand 5', logoUrl: 'https://www.webmobilefirst.com/images/logo-facebook.png' },
+    { name: 'Brand 6', logoUrl: 'https://www.webmobilefirst.com/images/logo-amazon.png' },
+    { name: 'Brand 7', logoUrl: 'https://www.webmobilefirst.com/images/logo-netflix.png' },
   ];
 
   return (
@@ -84,6 +95,33 @@ export default function HomePage() {
                          </div>
                      </div>
                  </div>
+            </div>
+        </section>
+
+        <section className="w-full py-12 md:py-24 bg-secondary/30">
+            <div className="container mx-auto px-4 md:px-6">
+                 <h2 className="text-2xl font-bold tracking-tighter text-center mb-8 text-muted-foreground">Our Trusted Partners</h2>
+                 <Carousel
+                    plugins={[plugin.current]}
+                    opts={{ align: "start", loop: true, }}
+                    className="w-full"
+                    onMouseEnter={plugin.current.stop}
+                    onMouseLeave={plugin.current.reset}
+                >
+                    <CarouselContent className="-ml-2">
+                        {brands.map((brand, index) => (
+                            <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/6 pl-2 flex justify-center">
+                                <Image
+                                    src={brand.logoUrl}
+                                    alt={brand.name}
+                                    width={120}
+                                    height={60}
+                                    className="object-contain h-12 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                                />
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                </Carousel>
             </div>
         </section>
 
@@ -166,30 +204,37 @@ export default function HomePage() {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {featuredProducts.map((product) => (
-                    <Card key={product.id} className="flex flex-col overflow-hidden transition-shadow hover:shadow-xl">
-                    <CardHeader className="p-0">
-                        <Link href={`/products/${product.id}`}>
-                        <Image
-                            src={product.imageUrl}
-                            alt={product.name}
-                            width={300}
-                            height={300}
-                            className="w-full h-48 object-cover"
-                            data-ai-hint={product.aiHint}
-                        />
-                        </Link>
-                    </CardHeader>
-                    <CardContent className="p-4 flex-1 flex flex-col">
-                        <CardTitle className="text-base md:text-lg font-headline mb-2">{product.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground flex-1">{product.description.substring(0, 60)}...</p>
-                        <p className="text-lg font-bold text-primary mt-2">{formatCurrency(product.price)}</p>
-                    </CardContent>
-                    <CardFooter className="p-4 pt-0">
-                        <Link href={`/products/${product.id}`} className="w-full">
-                        <Button className="w-full">View Details</Button>
-                        </Link>
-                    </CardFooter>
-                    </Card>
+                    <Link key={product.id} href={`/products/${product.id}`} className="group">
+                        <Card className="flex flex-col overflow-hidden transition-shadow duration-300 hover:shadow-xl h-full">
+                            <CardHeader className="p-0">
+                                <Image
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    width={300}
+                                    height={300}
+                                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                    data-ai-hint={product.aiHint}
+                                />
+                            </CardHeader>
+                            <CardContent className="p-4 flex-1 flex flex-col">
+                                <CardTitle className="text-base md:text-lg font-headline mb-2">{product.name}</CardTitle>
+                                <p className="text-sm text-muted-foreground flex-1">{product.description.substring(0, 60)}...</p>
+                                <p className="text-lg font-bold text-primary mt-2">{formatCurrency(product.price)}</p>
+                            </CardContent>
+                            <CardFooter className="p-4 pt-0">
+                                 <Button 
+                                    className="w-full"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        addToCart(product, 1);
+                                    }}
+                                >
+                                    Add to Cart
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    </Link>
                 ))}
                 </div>
             )}
