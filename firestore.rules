@@ -1,62 +1,63 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check for admin role
+  
+    // Helper function to check for Admin role
     function isAdmin() {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
-    
-    // Helper function to check if user is authenticated
-    function isAuthenticated() {
-      return request.auth != null;
-    }
 
-    // Products can be read by anyone, but only managed by admins
+    // Products: Public can read, Admins can write
     match /products/{productId} {
       allow read: if true;
       allow write: if isAdmin();
     }
-
-    // Settings can be read by anyone, but only managed by admins
+    
+    // Settings: Public can read, Admins can write
     match /settings/store_config {
-      allow read: if true;
-      allow write: if isAdmin();
+        allow read: if true;
+        allow write: if isAdmin();
     }
     
-    // Orders can only be read/written by admins
-    match /orders/{orderId} {
-        allow read, write: if isAdmin();
-    }
-    
-    // Users can read/write their own data. Admins can read all user data.
+    // Users: Users can read/update their own data, Admins can read all
     match /users/{userId} {
-        allow read, write: if request.auth.uid == userId || isAdmin();
+      allow read: if request.auth.uid == userId || isAdmin();
+      allow update: if request.auth.uid == userId;
+      // Create is handled by backend functions
+      allow create: if request.auth != null;
     }
     
-    // Newsletter subscriptions can be created by anyone, but only read by admins.
+    // Orders: Users can read their own, Admins can read/update all
+    match /orders/{orderId} {
+      allow create: if request.auth.uid != null;
+      allow read: if isAdmin() || request.auth.uid == resource.data.userId;
+      allow update: if isAdmin();
+    }
+    
+    // Notifications: Users can read/update their own, Admins can read all.
+    match /notifications/{notificationId} {
+        allow read, update: if isAdmin() || request.auth.uid == resource.data.userId;
+        allow create: if isAdmin();
+    }
+    
+    // Contact Messages: Anyone can create, only Admins can read/update.
+    match /contact_messages/{messageId} {
+        allow create: if true;
+        allow read, update: if isAdmin();
+    }
+    
+    // Newsletter: Anyone can create, only Admins can read.
     match /newsletter/{subscriptionId} {
         allow create: if true;
         allow read: if isAdmin();
-        allow delete, update: if false; // Nobody can update/delete
-    }
-
-    // Notifications can be read/updated by the assigned user, and created by admins.
-    match /notifications/{notificationId} {
-      allow read, update: if request.auth.uid == resource.data.userId;
-      allow create: if isAdmin();
-      allow delete: if false;
     }
     
-    // Contact messages can be created by anyone, but only read/updated by admins.
-    match /contact_messages/{messageId} {
-      allow create: if true;
-      allow read, update: if isAdmin();
-      allow delete: if false;
+    // Logs: Only backend/Admins can write, only Admins can read.
+    match /logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin(); // Should be locked down further in real-world to backend only
     }
-    
   }
 }

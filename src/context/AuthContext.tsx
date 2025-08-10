@@ -6,6 +6,7 @@ import { onIdTokenChanged, User, createUserWithEmailAndPassword, signInWithEmail
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { logEvent } from '@/lib/logger';
 
 interface AuthContextType {
   user: User | null;
@@ -38,6 +39,7 @@ const saveUserToDb = async (user: User) => {
                 createdAt: new Date().toISOString(),
                 isAdmin: false,
             }, { merge: true });
+            await logEvent('success', 'User Signup', `New user registered: ${user.email}`);
         } else {
             await setDoc(userRef, {
                 email: user.email,
@@ -48,6 +50,7 @@ const saveUserToDb = async (user: User) => {
         }
     } catch (error) {
         console.error("Error saving user to Firestore:", error);
+        await logEvent('error', 'User Save Failed', `Failed to save user ${user.email} to DB. Reason: ${error instanceof Error ? error.message : 'Unknown'}`);
     }
 };
 
