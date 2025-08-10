@@ -19,10 +19,17 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import Autoplay from "embla-carousel-autoplay"
 import { useCart } from '@/context/CartContext';
 
+interface Brand {
+    id: string;
+    name: string;
+    logoUrl: string;
+}
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
+  const [brandsLoading, setBrandsLoading] = useState(true);
   const { settings, loading: settingsLoading } = useSettings();
   const { addToCart } = useCart();
    const plugin = useRef(
@@ -30,12 +37,22 @@ export default function HomePage() {
   )
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
+    const unsubscribeProducts = onSnapshot(collection(db, "products"), (snapshot) => {
       const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
       setProducts(productsData);
       setLoading(false);
     });
-    return () => unsubscribe();
+
+    const unsubscribeBrands = onSnapshot(collection(db, "brands"), (snapshot) => {
+        const brandsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Brand));
+        setBrands(brandsData);
+        setBrandsLoading(false);
+    });
+
+    return () => {
+        unsubscribeProducts();
+        unsubscribeBrands();
+    }
   }, []);
 
   const featuredProducts = products.slice(0, 8);
@@ -44,15 +61,6 @@ export default function HomePage() {
     { name: 'Wellness', icon: HeartPulse, href: '/products?category=wellness', imageUrl: 'https://www.newfoodmagazine.com/wp-content/uploads/health-and-wellness.jpg', aiHint: 'yoga meditation' },
     { name: 'Baby Care', icon: Baby, href: '/products?category=baby-care', imageUrl: 'https://www.lullabytrust.org.uk/wp-content/uploads/2025/01/Hero-sub-hero-feature-banner-41-aspect-ratio-1280-720-1024x680-c-default.webp', aiHint: 'happy baby' },
     { name: 'First Aid', icon: BriefcaseMedical, href: '/products?category=first-aid', imageUrl: 'https://www.shekhawatihospital.com/wp-content/uploads/2022/03/first-aid.jpg', aiHint: 'first-aid kit' },
-  ];
-   const brands = [
-    { name: 'Brand 1', logoUrl: 'https://www.webmobilefirst.com/images/logo-coca-cola.png' },
-    { name: 'Brand 2', logoUrl: 'https://www.webmobilefirst.com/images/logo-google.png' },
-    { name: 'Brand 3', logoUrl: 'https://www.webmobilefirst.com/images/logo-microsoft.png' },
-    { name: 'Brand 4', logoUrl: 'https://www.webmobilefirst.com/images/logo-samsung.png' },
-    { name: 'Brand 5', logoUrl: 'https://www.webmobilefirst.com/images/logo-facebook.png' },
-    { name: 'Brand 6', logoUrl: 'https://www.webmobilefirst.com/images/logo-amazon.png' },
-    { name: 'Brand 7', logoUrl: 'https://www.webmobilefirst.com/images/logo-netflix.png' },
   ];
 
   return (
@@ -109,17 +117,25 @@ export default function HomePage() {
                     onMouseLeave={plugin.current.reset}
                 >
                     <CarouselContent className="-ml-2">
-                        {brands.map((brand, index) => (
-                            <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/6 pl-2 flex justify-center">
-                                <Image
-                                    src={brand.logoUrl}
-                                    alt={brand.name}
-                                    width={120}
-                                    height={60}
-                                    className="object-contain h-12 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                                />
-                            </CarouselItem>
-                        ))}
+                        {brandsLoading ? (
+                             [...Array(6)].map((_, i) => (
+                                <CarouselItem key={i} className="basis-1/3 md:basis-1/4 lg:basis-1/6 pl-2 flex justify-center">
+                                    <Skeleton className="h-12 w-24" />
+                                </CarouselItem>
+                             ))
+                        ) : (
+                            brands.map((brand) => (
+                                <CarouselItem key={brand.id} className="basis-1/3 md:basis-1/4 lg:basis-1/6 pl-2 flex justify-center">
+                                    <Image
+                                        src={brand.logoUrl}
+                                        alt={brand.name}
+                                        width={120}
+                                        height={60}
+                                        className="object-contain h-12 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                                    />
+                                </CarouselItem>
+                            ))
+                        )}
                     </CarouselContent>
                 </Carousel>
             </div>

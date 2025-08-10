@@ -22,6 +22,7 @@ import {
   Mail,
   Inbox,
   History,
+  Building2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -42,6 +43,7 @@ export default function AdminSidebar() {
   const menuItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/products', label: 'Products', icon: Box },
+    { href: '/admin/brands', label: 'Brands', icon: Building2 },
     { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { href: '/admin/customers', label: 'Customers', icon: Users },
     { href: '/admin/newsletter', label: 'Newsletter', icon: Mail },
