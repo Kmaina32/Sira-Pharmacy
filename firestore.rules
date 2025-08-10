@@ -4,33 +4,42 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
   
-    // Allow public read access to products and settings
+    // Products are publicly readable
     match /products/{productId} {
       allow read: if true;
       allow write: if request.auth != null && request.auth.token.isAdmin == true;
     }
 
+    // Settings are publicly readable
     match /settings/store_config {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.token.isAdmin == true;
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.isAdmin == true;
     }
 
-    // Allow users to be created and read by admins
+    // Users can only manage their own user document
     match /users/{userId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-        allow list: if request.auth != null && request.auth.token.isAdmin == true;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow list: if request.auth != null && request.auth.token.isAdmin == true;
     }
 
-    // Allow authenticated users to create orders, but only admins can manage them
+    // Orders can only be read by the user who created them or an admin
     match /orders/{orderId} {
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || request.auth.token.isAdmin == true);
       allow create: if request.auth != null;
-      allow read, update, delete: if request.auth != null && request.auth.token.isAdmin == true;
+      allow update: if request.auth != null && request.auth.token.isAdmin == true;
+    }
+    
+    // Notifications can be read/updated by the assigned user or an admin
+    match /notifications/{notificationId} {
+      allow read, list, update: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Creation is handled by the admin-only newsletter flow
+      allow create: if request.auth != null && request.auth.token.isAdmin == true;
     }
 
-    // Allow anyone to sign up for the newsletter
+    // Anyone can subscribe to the newsletter
     match /newsletter/{subscriptionId} {
-      allow read: if request.auth != null && request.auth.token.isAdmin == true;
       allow create: if true;
+      allow read: if request.auth != null && request.auth.token.isAdmin == true;
     }
   }
 }
