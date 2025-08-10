@@ -27,6 +27,7 @@ const saveUserToDb = async (user: User) => {
     const userRef = doc(db, 'users', user.uid);
     try {
         const userDoc = await getDoc(userRef);
+        // Only create the document if it doesn't exist
         if (!userDoc.exists()) {
              await setDoc(userRef, {
                 uid: user.uid,
@@ -35,7 +36,9 @@ const saveUserToDb = async (user: User) => {
                 photoURL: user.photoURL,
                 phoneNumber: user.phoneNumber,
                 createdAt: serverTimestamp(),
-            }, { merge: true });
+                // Setting isAdmin to false by default for new users
+                isAdmin: false,
+            });
         }
     } catch (error) {
         console.error("Error saving user to Firestore:", error);
@@ -52,8 +55,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       setLoading(true);
       if (user) {
-        await saveUserToDb(user);
-        const idTokenResult = await user.getIdTokenResult(true); // Force refresh
+        // We ensure the user is in the DB when their token changes.
+        // This handles login, signup, and token refresh.
+        await saveUserToDb(user); 
+        const idTokenResult = await user.getIdTokenResult(true);
         setIsAdmin(!!idTokenResult.claims.isAdmin);
         setUser(user);
       } else {
@@ -72,10 +77,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (email: string, password: string, displayName: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // After creation, update the profile
     await updateProfile(userCredential.user, { displayName });
-    const updatedUser = { ...userCredential.user, displayName };
-    await saveUserToDb(updatedUser as User);
-    setUser(updatedUser as User); 
+    // The onIdTokenChanged listener will handle saving the user to the DB.
+    // We force a reload of the user to make sure the latest profile data is available.
+    await userCredential.user.reload();
+    setUser(auth.currentUser);
     return userCredential;
   };
 
@@ -85,16 +92,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    await saveUserToDb(result.user);
-    return result;
+    return signInWithPopup(auth, provider);
+    // The onIdTokenChanged listener will handle saving the user to the DB.
   };
 
   const setupRecaptcha = (elementId: string) => {
+    if ((window as any).recaptchaVerifier) {
+        (window as any).recaptchaVerifier.clear();
+    }
     (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, elementId, {
       'size': 'invisible',
       'callback': (response: any) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        // reCAPTCHA solved.
       }
     });
     return (window as any).recaptchaVerifier;
@@ -104,10 +113,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
   }
 
-  const confirmVerificationCode = async (confirmationResult: ConfirmationResult, code: string) => {
-    const result = await confirmationResult.confirm(code);
-    await saveUserToDb(result.user);
-    return result;
+  const confirmVerificationCode = (confirmationResult: ConfirmationResult, code: string) => {
+    return confirmationResult.confirm(code);
+    // The onIdTokenChanged listener will handle saving the user to the DB.
   }
 
   return (
