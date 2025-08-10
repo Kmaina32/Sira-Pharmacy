@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { onIdTokenChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, getIdTokenResult, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -36,9 +36,17 @@ const saveUserToDb = async (user: User) => {
                 displayName: user.displayName,
                 photoURL: user.photoURL,
                 phoneNumber: user.phoneNumber,
-                createdAt: serverTimestamp(),
+                createdAt: new Date().toISOString(),
                 // Setting isAdmin to false by default for new users
                 isAdmin: false,
+            }, { merge: true });
+        } else {
+            // If user exists, merge new info, but be careful not to overwrite roles
+            await setDoc(userRef, {
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                phoneNumber: user.phoneNumber,
             }, { merge: true });
         }
     } catch (error) {
@@ -77,16 +85,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (email: string, password: string, displayName: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, { displayName });
-    // The onIdTokenChanged listener will handle saving to DB.
-    // Force a reload to ensure the new profile is active.
-    if (auth.currentUser) {
-       await auth.currentUser.reload();
-       const reloadedUser = auth.currentUser;
-       setUser(reloadedUser); // Manually set user to trigger UI update
-       await saveUserToDb(reloadedUser!);
-       const idTokenResult = await reloadedUser!.getIdTokenResult(true);
-       setIsAdmin(!!idTokenResult.claims.isAdmin);
-    }
+    
+    // Manually update the user in state to ensure UI consistency
+    const updatedUser = { ...userCredential.user, displayName };
+    await saveUserToDb(updatedUser as User);
+    
+    // The listener will also run, but this ensures immediate consistency
+    setUser(userCredential.user);
+    const idTokenResult = await userCredential.user.getIdTokenResult(true);
+    setIsAdmin(!!idTokenResult.claims.isAdmin);
+    
     return userCredential;
   };
 
@@ -97,29 +105,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
+    await saveUserToDb(result.user);
     // The onIdTokenChanged listener will handle the rest.
     return result;
   };
 
   const setupRecaptcha = (elementId: string) => {
+    // Ensure we don't create multiple instances
     if ((window as any).recaptchaVerifier) {
-        (window as any).recaptchaVerifier.clear();
+      (window as any).recaptchaVerifier.clear();
     }
-    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, elementId, {
+    const recaptchaVerifier = new RecaptchaVerifier(auth, elementId, {
       'size': 'invisible',
       'callback': (response: any) => {
-        // reCAPTCHA solved.
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+      },
+      'expired-callback': () => {
+        // Response expired. Ask user to solve reCAPTCHA again.
       }
     });
-    return (window as any).recaptchaVerifier;
+    (window as any).recaptchaVerifier = recaptchaVerifier;
+    return recaptchaVerifier;
   }
 
   const sendVerificationCode = (phoneNumber: string, appVerifier: RecaptchaVerifier) => {
     return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
   }
 
-  const confirmVerificationCode = (confirmationResult: ConfirmationResult, code: string) => {
-    const result = confirmationResult.confirm(code);
+  const confirmVerificationCode = async (confirmationResult: ConfirmationResult, code: string) => {
+    const result = await confirmationResult.confirm(code);
+    await saveUserToDb(result.user);
     // The onIdTokenChanged listener will handle the rest.
     return result;
   }

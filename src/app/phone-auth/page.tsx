@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -14,12 +14,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import PhoneInput from 'react-phone-number-input';
 import { E164Number } from 'libphonenumber-js/types';
-import type { ConfirmationResult } from 'firebase/auth';
+import type { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import Image from 'next/image';
 
 export default function PhoneAuthPage() {
   const router = useRouter();
-  const { setupRecaptcha, sendVerificationCode, confirmVerificationCode } = useAuth();
+  const { sendVerificationCode, confirmVerificationCode, setupRecaptcha } = useAuth();
   const { toast } = useToast();
   const [phone, setPhone] = useState<E164Number | undefined>();
   const [otp, setOtp] = useState('');
@@ -27,6 +28,12 @@ export default function PhoneAuthPage() {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { settings } = useSettings();
+
+  // This effect will ensure the reCAPTCHA container is ready.
+  useEffect(() => {
+    // This is just to ensure the container div exists.
+    // The verifier will be created on demand.
+  }, []);
 
   const handleSendCode = async () => {
     if (!phone) {
@@ -43,6 +50,12 @@ export default function PhoneAuthPage() {
     } catch (error: any) {
         console.error(error);
         toast({ title: 'Failed to Send Code', description: error.message, variant: 'destructive' });
+        // Make sure recaptcha is rendered again if it fails
+        if ((window as any).recaptchaVerifier) {
+            (window as any).recaptchaVerifier.render().then((widgetId: any) => {
+                (window as any).recaptchaWidgetId = widgetId;
+            });
+        }
     } finally {
         setIsLoading(false);
     }
@@ -103,6 +116,7 @@ export default function PhoneAuthPage() {
                         onChange={setPhone}
                         className="input" // A custom class to style with globals.css
                     />
+                    <div id="recaptcha-container"></div>
                     <Button onClick={handleSendCode} className="w-full" disabled={isLoading}>
                         {isLoading ? 'Sending...' : 'Send Verification Code'}
                     </Button>
@@ -117,7 +131,7 @@ export default function PhoneAuthPage() {
                     <Button variant="link" onClick={() => setStep('phone')}>Use a different number</Button>
                 </div>
             )}
-            <div id="recaptcha-container"></div>
+            
         </CardContent>
       </Card>
     </div>
