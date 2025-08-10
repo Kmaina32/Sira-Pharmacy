@@ -20,6 +20,7 @@ import {
   Syringe,
   Settings,
   Mail,
+  Inbox,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -43,6 +44,7 @@ export default function AdminSidebar() {
     { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { href: '/admin/customers', label: 'Customers', icon: Users },
     { href: '/admin/newsletter', label: 'Newsletter', icon: Mail },
+    { href: '/admin/messages', label: 'Messages', icon: Inbox },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
   ];
 

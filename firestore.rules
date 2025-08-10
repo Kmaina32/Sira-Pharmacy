@@ -3,10 +3,16 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helper function to check for admin role
     function isAdmin() {
-      return request.auth.token.isAdmin == true;
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
     // Products can be read by anyone, but only managed by admins
@@ -21,33 +27,36 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
-    // Users can manage their own document. Admins can read the entire collection.
-    match /users/{userId} {
-      allow get, update: if request.auth.uid == userId;
-      allow list: if isAdmin();
-    }
-
-    // Orders can be created by any authenticated user.
-    // Users can only read their own orders. Admins can read all orders and update them.
+    // Orders can only be read/written by admins
     match /orders/{orderId} {
-      allow create: if request.auth != null;
-      allow read, update: if isAdmin() || (request.auth != null && request.auth.uid == resource.data.userId);
-      allow list: if isAdmin();
+        allow read, write: if isAdmin();
     }
     
-    // Notifications are specific to a user. Only they can read/update them.
-    // Admins need to be able to create them (via the newsletter flow).
-    match /notifications/{notificationId} {
-        allow read, update: if request.auth.uid == resource.data.userId;
-        allow create: if isAdmin();
-        // No list access for users to prevent listing others' notifications
+    // Users can read/write their own data. Admins can read all user data.
+    match /users/{userId} {
+        allow read, write: if request.auth.uid == userId || isAdmin();
     }
     
-    // Newsletter collection is for sign-ups. Anyone can sign up.
-    // Only admins can read the list of subscribers.
+    // Newsletter subscriptions can be created by anyone, but only read by admins.
     match /newsletter/{subscriptionId} {
         allow create: if true;
-        allow read, list: if isAdmin();
+        allow read: if isAdmin();
+        allow delete, update: if false; // Nobody can update/delete
     }
+
+    // Notifications can be read/updated by the assigned user, and created by admins.
+    match /notifications/{notificationId} {
+      allow read, update: if request.auth.uid == resource.data.userId;
+      allow create: if isAdmin();
+      allow delete: if false;
+    }
+    
+    // Contact messages can be created by anyone, but only read/updated by admins.
+    match /contact_messages/{messageId} {
+      allow create: if true;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+    
   }
 }
