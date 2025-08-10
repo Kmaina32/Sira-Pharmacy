@@ -5,7 +5,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCMFg1ivJt_0Ueivfc1p41p2u9c9FVXjOI",
+  apiKey: "AIzaSyBw_TGhx5qpVyKDnX4k_rpBIYs18cTU2Ok",
   authDomain: "sira-pharmacy-online.firebaseapp.com",
   projectId: "sira-pharmacy-online",
   storageBucket: "sira-pharmacy-online.appspot.com",
