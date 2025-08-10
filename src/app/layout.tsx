@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import 'react-phone-number-input/style.css'
@@ -9,6 +10,7 @@ import { SettingsProvider } from '@/context/SettingsContext';
 import ThemeUpdater from '@/components/ThemeUpdater';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import NewsletterPopup from '@/components/NewsletterPopup';
+import UserTutorial from '@/components/UserTutorial';
 
 export const metadata: Metadata = {
   title: 'Sira Pharmacy Online',
@@ -32,6 +34,7 @@ export default function RootLayout({
             <SettingsProvider>
                 <CartProvider>
                     <ThemeUpdater />
+                    <UserTutorial />
                     {children}
                     <Toaster />
                     <CookieConsentBanner />
